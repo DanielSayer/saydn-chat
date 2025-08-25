@@ -7,6 +7,8 @@ import {
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 
+import globals_css from "@/styles/globals.css?url";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
     head: () => ({
@@ -22,6 +24,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           title: "saydn chat",
         },
       ],
+      links: [{ rel: "stylesheet", href: globals_css }],
     }),
     component: RootComponent,
   },
@@ -37,7 +40,7 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
