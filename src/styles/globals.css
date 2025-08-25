@@ -186,3 +186,50 @@
   --tw-prose-th-borders: var(--border);
   --tw-prose-td-borders: var(--border);
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    --color-scrollbar-track: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border) !important;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-scrollbar-track);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* WebKit browsers (Chrome, Safari, Edge) */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
