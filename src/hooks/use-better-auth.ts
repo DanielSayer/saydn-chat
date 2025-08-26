@@ -1,8 +1,10 @@
 import { useMemo } from "react";
-import { queryClient } from "../providers";
 import { useSession, useToken } from "./auth-hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 const useBetterAuth = () => {
+  const queryClient = useQueryClient();
+
   const data = useToken({
     initialData: () => {
       const token = queryClient.getQueryData(["auth_token"]);

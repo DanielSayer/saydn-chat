@@ -2,11 +2,27 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { ConvexProviderWithAuth } from "convex/react";
 import type { ReactNode } from "react";
-import { convexQueryClient, queryClient } from "./providers";
 import { routeTree } from "./routeTree.gen";
 import { useBetterAuth } from "./hooks/use-better-auth";
+import { QueryClient } from "@tanstack/react-query";
+import { env } from "./env/client";
+import { ConvexQueryClient } from "@convex-dev/react-query";
 
 export function createRouter() {
+  const convexQueryClient = new ConvexQueryClient(env.VITE_CONVEX_URL);
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 5,
+        queryKeyHashFn: convexQueryClient.hashFn(),
+        queryFn: convexQueryClient.queryFn(),
+      },
+    },
+  });
+  convexQueryClient.connect(queryClient);
+
   const router = routerWithQueryClient(
     createTanStackRouter({
       routeTree,
@@ -15,16 +31,16 @@ export function createRouter() {
       defaultNotFoundComponent: () => (
         <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
           <div className="space-y-2">
-            <h1 className="font-bold text-8xl text-muted-foreground">404</h1>
-            <h2 className="font-semibold text-2xl">Page Not Found</h2>
-            <p className="max-w-md text-muted-foreground">
+            <h1 className="text-muted-foreground text-8xl font-bold">404</h1>
+            <h2 className="text-2xl font-semibold">Page Not Found</h2>
+            <p className="text-muted-foreground max-w-md">
               The page you&apos;re looking for doesn&apos;t exist or has been
               moved.
             </p>
           </div>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Go Home
           </a>
