@@ -1,6 +1,5 @@
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { useForm } from "react-hook-form";
-import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
@@ -11,12 +10,60 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import PasswordInput from "../password-input";
+import z from "zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { SignInError } from "@/lib/errors/sign-in-error";
+import { authClient } from "@/lib/auth-client";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { SubmitButton } from "../buttons/submit-button";
+
+const SignUpSchema = z.object({
+  email: z.email().min(1, { message: "Email is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
+type User = z.infer<typeof SignUpSchema>;
 
 function SignIn() {
-  const form = useForm();
+  const navigate = useNavigate();
+  const [isComplete, setIsComplete] = useState(false);
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (data: User) => {
+      const result = await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+      });
 
-  const onSubmit = () => {
-    console.log("onSubmit");
+      if (result.error) {
+        throw new SignInError(
+          result.error.message ?? "Email or password is incorrect",
+        );
+      }
+    },
+    onSuccess: async () => {
+      setIsComplete(true);
+      new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+        navigate({ to: "/chat", from: "/auth/sign-in", replace: true }),
+      );
+    },
+    onError: (error) => {
+      form.setError("root", { message: error.message });
+    },
+  });
+
+  const form = useForm<User>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: standardSchemaResolver(SignUpSchema),
+  });
+
+  const onSubmit = async (user: User) => {
+    await mutateAsync(user);
   };
 
   return (
@@ -28,7 +75,7 @@ function SignIn() {
       }}
     >
       <div className="flex w-full max-w-sm flex-col gap-6 md:max-w-md">
-        <Card className="inset-shadow-sm gap-4 overflow-hidden border-2 bg-card pt-3 pb-5">
+        <Card className="bg-card gap-4 overflow-hidden border-2 pt-3 pb-5 inset-shadow-sm">
           <CardHeader className="flex justify-center border-b-2 [.border-b-2]:pb-2.5">
             <AnimatePresence mode="wait">
               <motion.div
@@ -61,7 +108,8 @@ function SignIn() {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="hello@t3.gg"
+                            autoComplete="email"
+                            placeholder="hello@saydn.chat"
                             {...field}
                           />
                         </FormControl>
@@ -82,9 +130,9 @@ function SignIn() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="password"
+                          <PasswordInput
+                            placeholder="••••••••"
+                            autoComplete="current-password"
                             {...field}
                           />
                         </FormControl>
@@ -93,15 +141,26 @@ function SignIn() {
                     )}
                   />
                 </motion.div>
+                {form.formState.errors.root && (
+                  <p className="text-destructive -my-2 text-sm">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
                 <motion.div
                   className="mt-6 w-full"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
                 >
-                  <Button type="submit" className="h-10 w-full">
+                  <SubmitButton
+                    className="h-10 w-full"
+                    isLoading={isPending}
+                    loadingText="Signing in..."
+                    completeText="Signed in!"
+                    isComplete={isComplete}
+                  >
                     Sign in
-                  </Button>
+                  </SubmitButton>
                 </motion.div>
               </form>
             </Form>

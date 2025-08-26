@@ -11,5 +11,5 @@ export const Chat = () => {
     );
   }
 
-  return "Signed in";
+  return <div className="mx-auto max-w-4xl">Signed in</div>;
 };

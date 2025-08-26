@@ -12,17 +12,47 @@ import { createFileRoute } from '@tanstack/react-router'
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ChatIndexRouteImport } from './routes/_chat.index'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as RouteRouteImport } from './routes/route'
+import { Route as ChatIndexRouteImport } from './routes/chat.index'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const AuthSignUpLazyRouteImport = createFileRoute('/auth/sign-up')()
 const AuthSignInLazyRouteImport = createFileRoute('/auth/sign-in')()
 const rootServerRouteImport = createServerRootRoute()
 
-const ChatIndexRoute = ChatIndexRouteImport.update({
-  id: '/_chat/',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RouteRoute = RouteRouteImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ChatRoute,
 } as any)
 const AuthSignUpLazyRoute = AuthSignUpLazyRouteImport.update({
   id: '/auth/sign-up',
@@ -41,33 +71,75 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof RouteRoute
+  '/about': typeof AboutRoute
+  '/chat': typeof ChatRouteWithChildren
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/settings': typeof SettingsRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
-  '/': typeof ChatIndexRoute
+  '/chat/': typeof ChatIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof RouteRoute
+  '/about': typeof AboutRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/settings': typeof SettingsRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
-  '/': typeof ChatIndexRoute
+  '/chat': typeof ChatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof RouteRoute
+  '/about': typeof AboutRoute
+  '/chat': typeof ChatRouteWithChildren
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/settings': typeof SettingsRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
-  '/_chat/': typeof ChatIndexRoute
+  '/chat/': typeof ChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/auth/sign-in' | '/auth/sign-up' | '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/chat'
+    | '/privacy-policy'
+    | '/settings'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/chat/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth/sign-in' | '/auth/sign-up' | '/'
-  id: '__root__' | '/auth/sign-in' | '/auth/sign-up' | '/_chat/'
+  to:
+    | '/'
+    | '/about'
+    | '/privacy-policy'
+    | '/settings'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/chat'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/chat'
+    | '/privacy-policy'
+    | '/settings'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  RouteRoute: typeof RouteRoute
+  AboutRoute: typeof AboutRoute
+  ChatRoute: typeof ChatRouteWithChildren
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  SettingsRoute: typeof SettingsRoute
   AuthSignInLazyRoute: typeof AuthSignInLazyRoute
   AuthSignUpLazyRoute: typeof AuthSignUpLazyRoute
-  ChatIndexRoute: typeof ChatIndexRoute
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
@@ -93,12 +165,47 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_chat/': {
-      id: '/_chat/'
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof ChatIndexRouteImport
+      preLoaderRoute: typeof RouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/chat/': {
+      id: '/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof ChatRoute
     }
     '/auth/sign-up': {
       id: '/auth/sign-up'
@@ -128,10 +235,24 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface ChatRouteChildren {
+  ChatIndexRoute: typeof ChatIndexRoute
+}
+
+const ChatRouteChildren: ChatRouteChildren = {
+  ChatIndexRoute: ChatIndexRoute,
+}
+
+const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
+  RouteRoute: RouteRoute,
+  AboutRoute: AboutRoute,
+  ChatRoute: ChatRouteWithChildren,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  SettingsRoute: SettingsRoute,
   AuthSignInLazyRoute: AuthSignInLazyRoute,
   AuthSignUpLazyRoute: AuthSignUpLazyRoute,
-  ChatIndexRoute: ChatIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
