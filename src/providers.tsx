@@ -1,10 +1,8 @@
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient } from "@tanstack/react-query";
-import { browserEnv } from "./lib/browser-env";
+import { env } from "./env/client";
 
-export const convexQueryClient = new ConvexQueryClient(
-  browserEnv("VITE_CONVEX_URL"),
-);
+export const convexQueryClient = new ConvexQueryClient(env.VITE_CONVEX_URL);
 
 export const queryClient: QueryClient = new QueryClient({
   defaultOptions: {
