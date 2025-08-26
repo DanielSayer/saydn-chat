@@ -1,6 +1,14 @@
+import { authClient } from "@/lib/auth-client";
+import { SignUpError } from "@/lib/errors/sign-up-error";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "../ui/button";
+import z from "zod";
+import { SubmitButton } from "../buttons/submit-button";
+import PasswordInput from "../password-input";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
@@ -12,11 +20,69 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 
-function SignUp() {
-  const form = useForm();
+const SignUpSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, { error: "First name is required" })
+      .max(255, { error: "First name is too long" }),
+    lastName: z
+      .string()
+      .min(1, { error: "Last name is required" })
+      .max(255, { error: "Last name is too long" }),
+    email: z.email({ error: "Invalid email" }),
+    password: z
+      .string()
+      .min(8, { error: "Password must be at least 8 characters" })
+      .max(255, { error: "Password is too long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-  const onSubmit = () => {
-    console.log("onSubmit");
+type User = z.infer<typeof SignUpSchema>;
+
+function SignUp() {
+  const navigate = useNavigate();
+  const [isComplete, setIsComplete] = useState(false);
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (data: User) => {
+      const result = await authClient.signUp.email({
+        name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result.error) {
+        throw new SignUpError(result.error.message ?? "Unknown error");
+      }
+    },
+    onSuccess: async () => {
+      setIsComplete(true);
+      new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+        navigate({ to: "/", from: "/auth/sign-up", replace: true }),
+      );
+    },
+    onError: (error) => {
+      form.setError("root", { message: error.message });
+    },
+  });
+
+  const form = useForm<User>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    resolver: standardSchemaResolver(SignUpSchema),
+  });
+
+  const onSubmit = async (user: User) => {
+    await mutateAsync(user);
   };
 
   return (
@@ -97,6 +163,7 @@ function SignUp() {
                           <Input
                             type="email"
                             placeholder="hello@t3.gg"
+                            autoComplete="email"
                             {...field}
                           />
                         </FormControl>
@@ -117,9 +184,9 @@ function SignUp() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="password"
+                          <PasswordInput
+                            placeholder="••••••••"
+                            autoComplete="new-password"
                             {...field}
                           />
                         </FormControl>
@@ -129,14 +196,51 @@ function SignUp() {
                   />
                 </motion.div>
                 <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.3 }}
+                >
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    rules={{ deps: ["password"] }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm password</FormLabel>
+                        <FormControl>
+                          <PasswordInput
+                            placeholder="••••••••"
+                            autoComplete="new-password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+
+                {form.formState.errors.root && (
+                  <p className="text-destructive text-sm">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
+
+                <motion.div
                   className="mt-6 w-full"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
                 >
-                  <Button type="submit" className="h-10 w-full">
+                  <SubmitButton
+                    className="h-10 w-full"
+                    completeText="Account created!"
+                    isLoading={isPending}
+                    loadingText="Creating account..."
+                    isComplete={isComplete}
+                  >
                     Sign up
-                  </Button>
+                  </SubmitButton>
                 </motion.div>
               </form>
             </Form>

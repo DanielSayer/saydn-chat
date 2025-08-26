@@ -9,12 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { createFileRoute } from '@tanstack/react-router'
+import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ChatIndexRouteImport } from './routes/_chat.index'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const AuthSignUpLazyRouteImport = createFileRoute('/auth/sign-up')()
 const AuthSignInLazyRouteImport = createFileRoute('/auth/sign-in')()
+const rootServerRouteImport = createServerRootRoute()
 
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/_chat/',
@@ -31,6 +34,11 @@ const AuthSignInLazyRoute = AuthSignInLazyRouteImport.update({
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/auth/sign-in.lazy').then((d) => d.Route))
+const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInLazyRoute
@@ -61,6 +69,27 @@ export interface RootRouteChildren {
   AuthSignUpLazyRoute: typeof AuthSignUpLazyRoute
   ChatIndexRoute: typeof ChatIndexRoute
 }
+export interface FileServerRoutesByFullPath {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesByTo {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesById {
+  __root__: typeof rootServerRouteImport
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRouteTypes {
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths: '/api/auth/$'
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to: '/api/auth/$'
+  id: '__root__' | '/api/auth/$'
+  fileServerRoutesById: FileServerRoutesById
+}
+export interface RootServerRouteChildren {
+  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
@@ -87,6 +116,17 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+declare module '@tanstack/react-start/server' {
+  interface ServerFileRoutesByPath {
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+  }
+}
 
 const rootRouteChildren: RootRouteChildren = {
   AuthSignInLazyRoute: AuthSignInLazyRoute,
@@ -96,3 +136,9 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+}
+export const serverRouteTree = rootServerRouteImport
+  ._addFileChildren(rootServerRouteChildren)
+  ._addFileTypes<FileServerRouteTypes>()
