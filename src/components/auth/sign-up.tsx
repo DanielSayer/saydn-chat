@@ -62,7 +62,7 @@ function SignUp() {
     onSuccess: async () => {
       setIsComplete(true);
       new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
-        navigate({ to: "/", from: "/auth/sign-up", replace: true }),
+        navigate({ to: "/chat", from: "/auth/sign-up", replace: true }),
       );
     },
     onError: (error) => {
@@ -94,7 +94,7 @@ function SignUp() {
       }}
     >
       <div className="flex w-full max-w-sm flex-col gap-6 md:max-w-md">
-        <Card className="inset-shadow-sm gap-4 overflow-hidden border-2 bg-card pt-3 pb-5">
+        <Card className="bg-card gap-4 overflow-hidden border-2 pt-3 pb-5 inset-shadow-sm">
           <CardHeader className="flex justify-center border-b-2 [.border-b-2]:pb-2.5">
             <AnimatePresence mode="wait">
               <motion.div
@@ -119,7 +119,7 @@ function SignUp() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.3 }}
-                  className="flex w-full gap-3 flex-col lg:flex-row"
+                  className="flex w-full flex-col gap-3 lg:flex-row"
                 >
                   <FormField
                     control={form.control}
@@ -221,7 +221,7 @@ function SignUp() {
                 </motion.div>
 
                 {form.formState.errors.root && (
-                  <p className="text-destructive text-sm">
+                  <p className="text-destructive -my-2 text-sm">
                     {form.formState.errors.root.message}
                   </p>
                 )}
