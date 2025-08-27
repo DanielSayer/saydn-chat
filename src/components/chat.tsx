@@ -15,7 +15,9 @@ type ChatProps = {
 };
 
 function ChatContent({ conversationId }: ChatProps) {
-  const { status, messages, sendMessage, stop } = useChat({ conversationId });
+  const { status, messages, sendMessage, stop, getResponseId } = useChat({
+    conversationId,
+  });
 
   const onSubmit = (input: string) => {
     if (status === "streaming") {
@@ -31,7 +33,14 @@ function ChatContent({ conversationId }: ChatProps) {
       return;
     }
 
-    sendMessage({ text: input });
+    sendMessage(
+      { text: input },
+      {
+        body: {
+          responseId: getResponseId(),
+        },
+      },
+    );
   };
 
   return (

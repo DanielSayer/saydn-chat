@@ -8,12 +8,12 @@ export const TextPart = v.object({
 export const ImagePart = v.object({
   type: v.literal("image"),
   image: v.string(),
-  mimeType: v.string(),
+  mediaType: v.string(),
 });
 
 export const ReasoningPart = v.object({
   type: v.literal("reasoning"),
-  reasoning: v.string(),
+  text: v.string(),
   duration: v.optional(v.number()),
 });
 
@@ -21,7 +21,7 @@ export const FilePart = v.object({
   type: v.literal("file"),
   data: v.string(),
   filename: v.optional(v.string()),
-  mimeType: v.optional(v.string()),
+  mediaType: v.optional(v.string()),
 });
 
 export const ErrorUIPart = v.object({
