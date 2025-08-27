@@ -24,6 +24,7 @@ export const auth = betterAuth({
         expirationTime: "6h",
       },
       jwks: {
+        remoteUrl: `${env.VITE_BETTER_AUTH_URL}/api/auth/jwks`,
         keyPairConfig: {
           alg: "RS256",
           modulusLength: 2048,

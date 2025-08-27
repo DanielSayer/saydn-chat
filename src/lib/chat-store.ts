@@ -66,22 +66,22 @@ export const useChatStore = create<ChatState & ChatActions>((set) => ({
     set({ rerenderTrigger: nanoid() });
   },
 
-  setAttachedStreamId: (threadId, streamId) => {
-    if (!threadId) return;
+  setAttachedStreamId: (conversationId, streamId) => {
+    if (!conversationId) return;
     set((state) => ({
       attachedStreamIds: {
         ...state.attachedStreamIds,
-        [threadId]: streamId,
+        [conversationId]: streamId,
       },
     }));
   },
 
-  setPendingStream: (threadId, pending) => {
-    if (!threadId) return;
+  setPendingStream: (conversationId, pending) => {
+    if (!conversationId) return;
     set((state) => ({
       pendingStreams: {
         ...state.pendingStreams,
-        [threadId]: pending,
+        [conversationId]: pending,
       },
     }));
   },

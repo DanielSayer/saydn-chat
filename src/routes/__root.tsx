@@ -1,11 +1,13 @@
-import type { ReactNode } from "react";
+import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
-  Outlet,
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import globals_css from "@/styles/globals.css?url";
 
@@ -45,8 +47,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <AuthQueryProvider>{children}</AuthQueryProvider>
         <Scripts />
+        <ReactQueryDevtools />
       </body>
     </html>
   );

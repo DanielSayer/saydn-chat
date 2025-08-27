@@ -7,7 +7,7 @@ const useBetterAuth = () => {
 
   const data = useToken({
     initialData: () => {
-      const token = queryClient.getQueryData(["auth_token"]);
+      const token = queryClient.getQueryData(["token"]);
       return token ?? undefined;
     },
   });

@@ -6,5 +6,5 @@ export const Route = createFileRoute("/chat/")({
 });
 
 function RouteComponent() {
-  return <Chat />;
+  return <Chat conversationId={undefined} />;
 }

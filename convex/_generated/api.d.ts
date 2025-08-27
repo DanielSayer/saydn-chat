@@ -8,17 +8,18 @@
  * @module
  */
 
-import type {
-  ApiFromModules,
-  FilterApi,
-  FunctionReference,
-} from "convex/server";
 import type * as http from "../http.js";
 import type * as http_actions_create_chat_route from "../http_actions/create_chat/route.js";
 import type * as lib_auth_get_user from "../lib/auth/get_user.js";
 import type * as schema_conversations from "../schema/conversations.js";
 import type * as schema_messages from "../schema/messages.js";
 import type * as schema_parts from "../schema/parts.js";
+
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -36,11 +37,15 @@ declare const fullApi: ApiFromModules<{
   "schema/messages": typeof schema_messages;
   "schema/parts": typeof schema_parts;
 }>;
+declare const fullApiWithMounts: typeof fullApi;
+
 export declare const api: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "public">
 >;
 export declare const internal: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "internal">
 >;
+
+export declare const components: {};
