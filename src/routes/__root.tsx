@@ -1,4 +1,3 @@
-import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -47,7 +46,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
-        <AuthQueryProvider>{children}</AuthQueryProvider>
+        {children}
         <Scripts />
         <ReactQueryDevtools />
       </body>

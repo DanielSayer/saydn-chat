@@ -8,9 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { useConvexAuth } from "convex/react";
 import {
   Loader2,
   LogOutIcon,
@@ -23,10 +24,17 @@ import { GitHubIcon } from "../icons/github-icon";
 
 export function UserButton() {
   const queryClient = useQueryClient();
-  const { data: session, isPending } = authClient.useSession();
+  const { signOut } = useAuthActions();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
 
-  if (isPending) {
+  const user = {
+    name: "Daniel",
+    email: "daniel@t3.gg",
+    image: "https://i.pravatar.cc/150?img=1",
+  };
+
+  if (isLoading) {
     return (
       <div className="flex h-8 w-8 items-center justify-center rounded-md">
         <Loader2 className="h-4 w-4 animate-spin" />
@@ -34,7 +42,7 @@ export function UserButton() {
     );
   }
 
-  if (!session?.user) {
+  if (!isAuthenticated) {
     return (
       <Button
         variant="outline"
@@ -46,7 +54,7 @@ export function UserButton() {
   }
 
   const handleSignOut = async () => {
-    await authClient.signOut();
+    await signOut();
     await queryClient.resetQueries({ queryKey: ["session"] });
     await queryClient.resetQueries({ queryKey: ["token"] });
     router.navigate({ to: "/" });
@@ -73,12 +81,12 @@ export function UserButton() {
         <button type="button" className="relative h-8 w-8 rounded-md">
           <Avatar className="h-8 w-8 rounded-md">
             <AvatarImage
-              src={session.user.image || undefined}
-              alt={session.user.name || "User"}
+              src={user?.image || undefined}
+              alt={user?.name || "User"}
             />
             <AvatarFallback>
-              {session.user.name ? (
-                getInitials(session.user.name)
+              {user?.name ? (
+                getInitials(user?.name)
               ) : (
                 <UserIcon className="h-4 w-4 rounded-md" />
               )}
@@ -90,10 +98,10 @@ export function UserButton() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm leading-none font-medium">
-              {session.user.name || "User"}
+              {user?.name || "User"}
             </p>
             <p className="text-muted-foreground text-xs leading-none">
-              {session.user.email}
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>

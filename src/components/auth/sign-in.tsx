@@ -13,12 +13,11 @@ import { Input } from "../ui/input";
 import PasswordInput from "../password-input";
 import z from "zod";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { SignInError } from "@/lib/errors/sign-in-error";
-import { authClient } from "@/lib/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SubmitButton } from "../buttons/submit-button";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 const SignUpSchema = z.object({
   email: z.email().min(1, { message: "Email is required" }),
@@ -29,18 +28,17 @@ type User = z.infer<typeof SignUpSchema>;
 
 function SignIn() {
   const navigate = useNavigate();
+  const { signIn } = useAuthActions();
   const [isComplete, setIsComplete] = useState(false);
   const { isPending, mutateAsync } = useMutation({
     mutationFn: async (data: User) => {
-      const result = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (result.error) {
-        throw new SignInError(
-          result.error.message ?? "Email or password is incorrect",
-        );
+      try {
+        await signIn("password", {
+          flow: "signIn",
+          ...data,
+        });
+      } catch (error) {
+        form.setError("root", { message: error.message });
       }
     },
     onSuccess: async () => {

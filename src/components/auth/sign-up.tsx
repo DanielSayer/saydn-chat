@@ -1,5 +1,4 @@
-import { authClient } from "@/lib/auth-client";
-import { SignUpError } from "@/lib/errors/sign-up-error";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -47,17 +46,16 @@ type User = z.infer<typeof SignUpSchema>;
 function SignUp() {
   const navigate = useNavigate();
   const [isComplete, setIsComplete] = useState(false);
+  const { signIn } = useAuthActions();
+
   const { isPending, mutateAsync } = useMutation({
     mutationFn: async (data: User) => {
-      const result = await authClient.signUp.email({
+      await signIn("password", {
+        flow: "signUp",
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         password: data.password,
       });
-
-      if (result.error) {
-        throw new SignUpError(result.error.message ?? "Unknown error");
-      }
     },
     onSuccess: async () => {
       setIsComplete(true);

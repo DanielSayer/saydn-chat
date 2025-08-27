@@ -1,5 +1,5 @@
-import { useSession, useToken } from "@/hooks/auth-hooks";
 import { useChat } from "@/hooks/use-chat";
+import { useConvexAuth } from "convex/react";
 import {
   Conversation,
   ConversationContent,
@@ -55,10 +55,9 @@ function ChatContent({ conversationId }: ChatProps) {
 }
 
 export function Chat({ conversationId }: ChatProps) {
-  const { data: session, isPending: isSessionPending } = useSession();
-  const { isPending: isTokenPending } = useToken();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
-  if (isSessionPending || isTokenPending) {
+  if (isLoading) {
     return (
       <div className="relative flex h-[calc(100dvh-64px)] items-center justify-center">
         <DotsLoader />
@@ -66,7 +65,7 @@ export function Chat({ conversationId }: ChatProps) {
     );
   }
 
-  if (!session?.user) {
+  if (!isAuthenticated) {
     return (
       <div className="relative flex h-[calc(100dvh-64px)] items-center justify-center">
         <SignupMessagePrompt />
