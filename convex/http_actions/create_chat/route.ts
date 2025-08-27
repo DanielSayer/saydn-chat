@@ -1,4 +1,3 @@
-import { getUser } from "@/convex/lib/auth/get_user";
 import { ChatError } from "@/lib/errors/chat-error";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { openai } from "@ai-sdk/openai";
@@ -9,7 +8,7 @@ export const createChat = httpAction(async (ctx, req) => {
     messages: UIMessage[];
   } = await req.json();
 
-  const user = await getUser(ctx.auth);
+  const user = await ctx.auth.getUserIdentity();
   if (!user) {
     throw new ChatError("unauthorized:chat").toResponse();
   }

@@ -11,7 +11,7 @@ import {
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import {
   Loader2,
   LogOutIcon,
@@ -21,18 +21,14 @@ import {
   Users,
 } from "lucide-react";
 import { GitHubIcon } from "../icons/github-icon";
+import { api } from "../../../convex/_generated/api";
 
 export function UserButton() {
   const queryClient = useQueryClient();
   const { signOut } = useAuthActions();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
-
-  const user = {
-    name: "Daniel",
-    email: "daniel@t3.gg",
-    image: "https://i.pravatar.cc/150?img=1",
-  };
+  const currentUser = useQuery(api.me.get);
 
   if (isLoading) {
     return (
@@ -81,12 +77,12 @@ export function UserButton() {
         <button type="button" className="relative h-8 w-8 rounded-md">
           <Avatar className="h-8 w-8 rounded-md">
             <AvatarImage
-              src={user?.image || undefined}
-              alt={user?.name || "User"}
+              src={currentUser?.image || undefined}
+              alt={currentUser?.name || "User"}
             />
             <AvatarFallback>
-              {user?.name ? (
-                getInitials(user?.name)
+              {currentUser?.name ? (
+                getInitials(currentUser?.name)
               ) : (
                 <UserIcon className="h-4 w-4 rounded-md" />
               )}
@@ -98,10 +94,10 @@ export function UserButton() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm leading-none font-medium">
-              {user?.name || "User"}
+              {currentUser?.name || "User"}
             </p>
             <p className="text-muted-foreground text-xs leading-none">
-              {user?.email}
+              {currentUser?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -117,7 +113,7 @@ export function UserButton() {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a
-            href="https://github.com/intern3-chat/intern3-chat"
+            href="https://github.com/DanielSayer/saydn-chat"
             target="_blank"
             rel="noopener noreferrer"
           >
