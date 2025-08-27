@@ -13,9 +13,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as http_actions_create_chat_route from "../http-actions/create-chat/route.js";
 import type * as http from "../http.js";
-import type * as lib_auth_get_user from "../lib/auth/get-user.js";
+import type * as http_actions_create_chat_route from "../http_actions/create_chat/route.js";
+import type * as lib_auth_get_user from "../lib/auth/get_user.js";
 import type * as schema_conversations from "../schema/conversations.js";
 import type * as schema_messages from "../schema/messages.js";
 import type * as schema_parts from "../schema/parts.js";
@@ -29,9 +29,9 @@ import type * as schema_parts from "../schema/parts.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "http-actions/create-chat/route": typeof http_actions_create_chat_route;
   http: typeof http;
-  "lib/auth/get-user": typeof lib_auth_get_user;
+  "http_actions/create_chat/route": typeof http_actions_create_chat_route;
+  "lib/auth/get_user": typeof lib_auth_get_user;
   "schema/conversations": typeof schema_conversations;
   "schema/messages": typeof schema_messages;
   "schema/parts": typeof schema_parts;

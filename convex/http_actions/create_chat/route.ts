@@ -1,4 +1,4 @@
-import { getUser } from "@/convex/lib/auth/get-user";
+import { getUser } from "@/convex/lib/auth/get_user";
 import { httpAction } from "../../_generated/server";
 import { ChatError } from "@/lib/errors/chat-error";
 
