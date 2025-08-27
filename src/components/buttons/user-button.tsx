@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/providers";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import {
   Loader2,
@@ -22,6 +22,7 @@ import {
 import { GitHubIcon } from "../icons/github-icon";
 
 export function UserButton() {
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 

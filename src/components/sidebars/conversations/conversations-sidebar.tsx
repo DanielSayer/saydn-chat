@@ -13,10 +13,12 @@ function ConversationsSidebar() {
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="flex w-full items-center">
-        <Link to="/">saydn.chat</Link>
-        <SidebarSeparator className="my-2" />
+        <Link to="/" className="text-2xl font-medium tracking-tighter">
+          saydn.chat
+        </Link>
+        <SidebarSeparator />
         <Link
-          to="/"
+          to="/chat"
           onClick={() => {
             document.dispatchEvent(new CustomEvent("new_chat"));
           }}
