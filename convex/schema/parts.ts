@@ -5,16 +5,31 @@ export const TextPart = v.object({
   text: v.string(),
 });
 
+export const ReasoningPart = v.object({
+  type: v.literal("reasoning"),
+  text: v.string(),
+  duration: v.number(),
+});
+
+export const SourceUrlPart = v.object({
+  type: v.literal("source-url"),
+  sourceId: v.string(),
+  url: v.string(),
+  title: v.optional(v.string()),
+});
+
+export const SourceDocumentPart = v.object({
+  type: v.literal("source-document"),
+  sourceId: v.string(),
+  mediaType: v.string(),
+  title: v.string(),
+  filename: v.optional(v.string()),
+});
+
 export const ImagePart = v.object({
   type: v.literal("image"),
   image: v.string(),
   mediaType: v.string(),
-});
-
-export const ReasoningPart = v.object({
-  type: v.literal("reasoning"),
-  text: v.string(),
-  duration: v.optional(v.number()),
 });
 
 export const FilePart = v.object({
@@ -35,6 +50,8 @@ export const ErrorUIPart = v.object({
 export const MessagePart = v.union(
   TextPart,
   ImagePart,
+  SourceDocumentPart,
+  SourceUrlPart,
   ReasoningPart,
   FilePart,
   ErrorUIPart,

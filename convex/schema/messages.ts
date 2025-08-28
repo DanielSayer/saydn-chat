@@ -6,6 +6,7 @@ export const MessageMetadata = v.object({
   modelName: v.optional(v.string()),
   inputTokens: v.optional(v.number()),
   outputTokens: v.optional(v.number()),
+  firstTokenAt: v.optional(v.number()),
   reasoningTokens: v.optional(v.number()),
   serverDurationMs: v.optional(v.number()),
 });

@@ -1,6 +1,7 @@
-import { UIMessage } from "ai";
+import { ChatError } from "@/lib/errors/chat-error";
+import type { UIMessage } from "ai";
 import { Infer } from "convex/values";
-import type { UIMessage as DB_UIMessage } from "../schema/messages";
+import type { UIMessage as DB_UIMessage } from "../../schema/messages";
 
 export function convertToDbMessage(
   message: UIMessage,
@@ -17,10 +18,7 @@ export function convertToDbMessage(
       }
 
       if (part.type === "reasoning") {
-        return {
-          type: "reasoning",
-          text: part.text,
-        };
+        throw new ChatError("bad_request:chat");
       }
 
       if (part.type === "file") {

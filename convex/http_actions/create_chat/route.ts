@@ -5,17 +5,19 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  smoothStream,
   streamText,
   type UIMessage,
 } from "ai";
 import { internal } from "../../_generated/api";
 import { Id } from "../../_generated/dataModel";
 import { httpAction } from "../../_generated/server";
-import { convertToDbMessage } from "../../lib/convert_to_db_message";
+import { convertOutputToMessagePart } from "../../lib/transformers/convert_stream_output_to_message_parts";
+import { convertToDbMessage } from "../../lib/transformers/convert_ui_message_to_db_message";
 import { generateTitle } from "./generate_title";
+import { makeDurationTransform } from "./stream_transform";
 
 export const createChat = httpAction(async (ctx, req) => {
+  const startAt = Date.now();
   const body: {
     conversationId?: string;
     responseId: string;
@@ -47,12 +49,13 @@ export const createChat = httpAction(async (ctx, req) => {
   );
 
   const streamStartedAt = Date.now();
+  const reasoningDurations: number[] = [];
+  let firstTokenAt: number | null = null;
   const stream = createUIMessageStream({
     execute: ({ writer }) => {
       writer.write({
         type: "data-conversationId",
         data: conversationId,
-        transient: true,
       });
 
       const modelMessages = convertToModelMessages(body.messages);
@@ -67,7 +70,16 @@ export const createChat = httpAction(async (ctx, req) => {
       const result = streamText({
         model: openai("gpt-5-nano"),
         system: "You are a helpful assistant.",
-        experimental_transform: smoothStream(),
+        experimental_transform: () => {
+          return makeDurationTransform({
+            onStart: ({ now }) => {
+              firstTokenAt = now;
+            },
+            onDuration: ({ durationMs }) => {
+              reasoningDurations.push(durationMs);
+            },
+          });
+        },
         messages: modelMessages,
         onError: (error) => {
           console.error("Stream text error:", error);
@@ -77,16 +89,19 @@ export const createChat = httpAction(async (ctx, req) => {
             reasoningSummary: "auto",
           },
         },
-        onFinish: async ({ totalUsage, response }) => {
+        onFinish: async ({ totalUsage, response, content }) => {
+          const parts = convertOutputToMessagePart(content, reasoningDurations);
+
           await ctx.runMutation(internal.messages.updateMessage, {
             messageId: convexAssistantMessageId,
-            parts: [],
+            parts: parts,
             metadata: {
+              modelId: response.modelId,
               inputTokens: totalUsage.inputTokens,
               outputTokens: totalUsage.outputTokens,
               reasoningTokens: totalUsage.reasoningTokens,
-              modelId: response.modelId,
               serverDurationMs: Date.now() - streamStartedAt,
+              firstTokenAt: firstTokenAt ? firstTokenAt - startAt : undefined,
             },
           });
         },

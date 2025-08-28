@@ -37,6 +37,11 @@ export const useChat = ({ conversationId }: UseChatProps) => {
       seededNextId.current = null;
       return id;
     },
+    onData: (data) => {
+      if (data.type === "data-conversationId") {
+        console.log("data-conversationId", data.data);
+      }
+    },
   });
 
   return {
