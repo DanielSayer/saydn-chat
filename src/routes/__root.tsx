@@ -9,6 +9,7 @@ import {
 import type { ReactNode } from "react";
 
 import globals_css from "@/styles/globals.css?url";
+import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -48,6 +49,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body>
         {children}
         <Scripts />
+        <Toaster />
         <ReactQueryDevtools />
       </body>
     </html>

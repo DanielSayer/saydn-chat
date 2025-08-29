@@ -16,14 +16,15 @@ import {
 } from "./ai-elements/prompt-input";
 
 type ChatInputProps = {
+  input: string;
+  setInput: (input: string) => void;
   onSubmit: (input: string) => void;
   status: ChatStatus;
 };
 
 const models = [{ name: "GPT-5 (mini)", value: "gpt-5-turbo" }];
 
-function ChatInput({ onSubmit, status }: ChatInputProps) {
-  const [input, setInput] = useState("");
+function ChatInput({ onSubmit, status, input, setInput }: ChatInputProps) {
   const [webSearch, setWebSearch] = useState(false);
   const [model, setModel] = useState(models[0].value);
 
