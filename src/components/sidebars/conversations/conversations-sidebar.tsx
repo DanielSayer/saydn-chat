@@ -5,11 +5,35 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import { groupConversationsByTimeBracket } from "@/lib/conversations";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { api } from "convex/_generated/api";
+import { usePaginatedQuery } from "convex/react";
+import { Loader2, PinIcon, Search } from "lucide-react";
+import { useMemo } from "react";
+import { ConversationGroup } from "./conversation-group";
 
 function ConversationsSidebar() {
+  const { results, loadMore, status } = usePaginatedQuery(
+    api.conversations.getUserConversations,
+    {},
+    { initialNumItems: 10 },
+  );
+
+  const sentinelRef = useInfiniteScroll({
+    hasMore: status === "CanLoadMore",
+    isLoading: status === "LoadingMore" || status === "LoadingFirstPage",
+    onLoadMore: () => loadMore(20),
+  });
+
+  console.log(status);
+
+  const conversations = useMemo(() => {
+    return groupConversationsByTimeBracket(results);
+  }, [results]);
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="flex w-full items-center">
@@ -41,7 +65,36 @@ function ConversationsSidebar() {
           </div>
         </Button>
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+      <SidebarContent className="pb-6">
+        <ConversationGroup
+          title="Pinned"
+          conversations={conversations.isPinned}
+          icon={PinIcon}
+        />
+        <ConversationGroup title="Today" conversations={conversations.today} />
+        <ConversationGroup
+          title="Yesterday"
+          conversations={conversations.yesterday}
+        />
+        <ConversationGroup
+          title="This week"
+          conversations={conversations.thisWeek}
+        />
+        <ConversationGroup
+          title="This month"
+          conversations={conversations.thisMonth}
+        />
+        <ConversationGroup title="Older" conversations={conversations.older} />
+        <div ref={sentinelRef} />
+        {(status === "LoadingMore" || status === "LoadingFirstPage") && (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        )}
+        {status === "Exhausted" && (
+          <p className="text-muted-foreground text-center text-sm">
+            No more results
+          </p>
+        )}
+      </SidebarContent>
     </Sidebar>
   );
 }

@@ -17,6 +17,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as ChatIndexRouteImport } from './routes/chat.index'
+import { Route as ChatConversationIdRouteImport } from './routes/chat.$conversationId'
 
 const AuthSignUpLazyRouteImport = createFileRoute('/auth/sign-up')()
 const AuthSignInLazyRouteImport = createFileRoute('/auth/sign-in')()
@@ -61,6 +62,11 @@ const AuthSignInLazyRoute = AuthSignInLazyRouteImport.update({
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/auth/sign-in.lazy').then((d) => d.Route))
+const ChatConversationIdRoute = ChatConversationIdRouteImport.update({
+  id: '/$conversationId',
+  path: '/$conversationId',
+  getParentRoute: () => ChatRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof RouteRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/settings': typeof SettingsRoute
+  '/chat/$conversationId': typeof ChatConversationIdRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat/': typeof ChatIndexRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/settings': typeof SettingsRoute
+  '/chat/$conversationId': typeof ChatConversationIdRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat': typeof ChatIndexRoute
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/settings': typeof SettingsRoute
+  '/chat/$conversationId': typeof ChatConversationIdRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat/': typeof ChatIndexRoute
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/privacy-policy'
     | '/settings'
+    | '/chat/$conversationId'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat/'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/privacy-policy'
     | '/settings'
+    | '/chat/$conversationId'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/privacy-policy'
     | '/settings'
+    | '/chat/$conversationId'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat/'
@@ -192,14 +204,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/$conversationId': {
+      id: '/chat/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof ChatConversationIdRouteImport
+      parentRoute: typeof ChatRoute
+    }
   }
 }
 
 interface ChatRouteChildren {
+  ChatConversationIdRoute: typeof ChatConversationIdRoute
   ChatIndexRoute: typeof ChatIndexRoute
 }
 
 const ChatRouteChildren: ChatRouteChildren = {
+  ChatConversationIdRoute: ChatConversationIdRoute,
   ChatIndexRoute: ChatIndexRoute,
 }
 

@@ -15,7 +15,7 @@ type UseChatProps = {
 export const useChat = ({ conversationId }: UseChatProps) => {
   const token = useAuthToken();
   const seededNextId = useRef<string | null>(null);
-  const { rerenderTrigger } = useChatStore();
+  const { rerenderTrigger, setConversationId } = useChatStore();
 
   const getResponseId = () => {
     const nextId = nanoid();
@@ -37,9 +37,13 @@ export const useChat = ({ conversationId }: UseChatProps) => {
       seededNextId.current = null;
       return id;
     },
-    onData: (data) => {
-      if (data.type === "data-conversationId") {
-        console.log("data-conversationId", data.data);
+    onData: (message) => {
+      if (message.type === "data-conversationId") {
+        if (!conversationId) {
+          if (typeof message.data === "string") {
+            setConversationId(message.data);
+          }
+        }
       }
     },
   });
