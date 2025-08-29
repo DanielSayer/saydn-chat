@@ -75,7 +75,6 @@ export function Chat({
   conversationId: string | undefined;
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
-
   const shouldRequestData = isAuthenticated && !!conversationId && !isLoading;
 
   const messages = useQuery(
@@ -101,7 +100,7 @@ export function Chat({
     );
   }
 
-  if (!messages) {
+  if (!messages && !!conversationId) {
     return (
       <div className="relative flex h-[calc(100dvh-64px)] items-center justify-center">
         <DotsLoader />
@@ -110,6 +109,9 @@ export function Chat({
   }
 
   return (
-    <ChatContent conversationId={conversationId} initialMessages={messages} />
+    <ChatContent
+      conversationId={conversationId}
+      initialMessages={messages ?? []}
+    />
   );
 }

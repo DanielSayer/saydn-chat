@@ -1,4 +1,4 @@
-import { SaydnUIMessage } from "./types";
+import type { SaydnUIMessage } from "./types";
 
 function groupReasoning(message: SaydnUIMessage): SaydnUIMessage {
   const groupedParts: SaydnUIMessage["parts"] = [];

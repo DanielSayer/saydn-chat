@@ -97,7 +97,7 @@ export const Reasoning = memo(
       >
         <Collapsible
           className={cn(
-            "not-prose data-[state=open]:bg-secondary mb-2 rounded-sm p-2 transition-colors duration-400",
+            "not-prose data-[state=open]:bg-secondary rounded-sm p-2 transition-colors duration-400",
             className,
           )}
           onOpenChange={handleOpenChange}

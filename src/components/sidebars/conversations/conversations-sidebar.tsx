@@ -14,8 +14,10 @@ import { usePaginatedQuery } from "convex/react";
 import { Loader2, PinIcon, Search } from "lucide-react";
 import { useMemo } from "react";
 import { ConversationGroup } from "./conversation-group";
+import { useChatStore } from "@/lib/chat-store";
 
 function ConversationsSidebar() {
+  const { resetChat } = useChatStore();
   const { results, loadMore, status } = usePaginatedQuery(
     api.conversations.getUserConversations,
     {},
@@ -41,9 +43,7 @@ function ConversationsSidebar() {
         <SidebarSeparator />
         <Link
           to="/chat"
-          onClick={() => {
-            document.dispatchEvent(new CustomEvent("new_chat"));
-          }}
+          onClick={resetChat}
           className={cn(
             buttonVariants({ variant: "default" }),
             "w-full justify-center",
