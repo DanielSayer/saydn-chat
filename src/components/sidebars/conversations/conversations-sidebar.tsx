@@ -12,11 +12,13 @@ import { Link } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 import { Loader2, PinIcon, Search } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ConversationGroup } from "./conversation-group";
 import { useChatStore } from "@/lib/chat-store";
+import { SearchDialog } from "./search-dialog";
 
 function ConversationsSidebar() {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { resetChat } = useChatStore();
   const { results, loadMore, status } = usePaginatedQuery(
     api.conversations.getUserConversations,
@@ -52,7 +54,11 @@ function ConversationsSidebar() {
           New Chat
         </Link>
 
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setIsSearchOpen(true)}
+        >
           <Search className="h-4 w-4" />
           Search chats
           <div className="ml-auto flex items-center gap-1 text-xs">
@@ -85,7 +91,9 @@ function ConversationsSidebar() {
         <ConversationGroup title="Older" conversations={conversations.older} />
         <div ref={sentinelRef} />
         {(status === "LoadingMore" || status === "LoadingFirstPage") && (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <div className="flex w-full justify-center">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
         )}
         {status === "Exhausted" && (
           <p className="text-muted-foreground text-center text-sm">
@@ -93,6 +101,7 @@ function ConversationsSidebar() {
           </p>
         )}
       </SidebarContent>
+      <SearchDialog isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
     </Sidebar>
   );
 }
