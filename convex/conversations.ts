@@ -27,6 +27,17 @@ export const updateConversationTitle = internalMutation({
   },
 });
 
+export const markAsUpdated = internalMutation({
+  args: {
+    conversationId: v.id("conversations"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.conversationId, {
+      updatedAt: Date.now(),
+    });
+  },
+});
+
 export const getUserConversations = query({
   args: {
     paginationOpts: paginationOptsValidator,
@@ -39,7 +50,8 @@ export const getUserConversations = query({
     }
     const conversationsQuery = ctx.db
       .query("conversations")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_updated_at")
+      .filter((q) => q.eq(q.field("userId"), userId))
       .filter((q) => q.neq(q.field("isPinned"), true))
       .order("desc")
       .paginate(args.paginationOpts);
@@ -48,7 +60,8 @@ export const getUserConversations = query({
     if (isFirstPage) {
       const pinnedQuery = ctx.db
         .query("conversations")
-        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .withIndex("by_updated_at")
+        .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isPinned"), true))
         .order("desc")
         .collect();

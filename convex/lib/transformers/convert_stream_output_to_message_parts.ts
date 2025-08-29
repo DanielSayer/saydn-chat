@@ -36,9 +36,9 @@ export function convertOutputToMessagePart(
 
     if (part.type === "file") {
       return {
-        type: "image",
+        type: "file",
         mediaType: part.file.mediaType,
-        image: part.file.base64,
+        url: part.file.base64,
       };
     }
 

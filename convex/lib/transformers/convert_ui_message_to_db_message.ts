@@ -24,7 +24,7 @@ export function convertToDbMessage(
       if (part.type === "file") {
         return {
           type: "file",
-          data: part.url,
+          url: part.url,
           filename: part.filename,
           mediaType: part.mediaType,
         };

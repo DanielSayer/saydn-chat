@@ -1,5 +1,5 @@
 import { useChat } from "@/hooks/use-chat";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import {
   Conversation,
   ConversationContent,
@@ -9,14 +9,19 @@ import { ChatInput } from "./chat-input";
 import { DotsLoader } from "./loaders/dots-loader";
 import { Message } from "./message";
 import { SignupMessagePrompt } from "./sign-up-message-prompt";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
+import { SaydnUIMessage } from "@/lib/types";
 
 type ChatProps = {
   conversationId: string | undefined;
+  initialMessages: SaydnUIMessage[];
 };
 
-function ChatContent({ conversationId }: ChatProps) {
+function ChatContent({ conversationId, initialMessages }: ChatProps) {
   const { status, messages, sendMessage, stop, getResponseId } = useChat({
     conversationId,
+    initialMessages,
   });
 
   const onSubmit = (input: string) => {
@@ -37,6 +42,7 @@ function ChatContent({ conversationId }: ChatProps) {
       { text: input },
       {
         body: {
+          conversationId,
           responseId: getResponseId(),
         },
       },
@@ -63,8 +69,21 @@ function ChatContent({ conversationId }: ChatProps) {
   );
 }
 
-export function Chat({ conversationId }: ChatProps) {
+export function Chat({
+  conversationId,
+}: {
+  conversationId: string | undefined;
+}) {
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const shouldRequestData = isAuthenticated && !!conversationId && !isLoading;
+
+  const messages = useQuery(
+    api.messages.getMessagesByConversationId,
+    shouldRequestData
+      ? { conversationId: conversationId as Id<"conversations"> }
+      : "skip",
+  );
 
   if (isLoading) {
     return (
@@ -82,5 +101,15 @@ export function Chat({ conversationId }: ChatProps) {
     );
   }
 
-  return <ChatContent conversationId={conversationId} />;
+  if (!messages) {
+    return (
+      <div className="relative flex h-[calc(100dvh-64px)] items-center justify-center">
+        <DotsLoader />
+      </div>
+    );
+  }
+
+  return (
+    <ChatContent conversationId={conversationId} initialMessages={messages} />
+  );
 }

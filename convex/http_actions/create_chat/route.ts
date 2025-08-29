@@ -104,6 +104,10 @@ export const createChat = httpAction(async (ctx, req) => {
               firstTokenAt: firstTokenAt ? firstTokenAt - startAt : undefined,
             },
           });
+
+          await ctx.runMutation(internal.conversations.markAsUpdated, {
+            conversationId: conversationId as Id<"conversations">,
+          });
         },
       });
 

@@ -1,6 +1,6 @@
 import { ChatError } from "@/lib/errors/chat-error";
 import { v } from "convex/values";
-import { internalMutation } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { MessageMetadata, UIMessage } from "./schema/messages";
 import { MessagePart } from "./schema/parts";
 
@@ -62,5 +62,37 @@ export const updateMessage = internalMutation({
       parts: args.parts,
       metadata: args.metadata,
     });
+  },
+});
+
+export const getMessagesByConversationId = query({
+  args: {
+    conversationId: v.id("conversations"),
+  },
+  handler: async (ctx, args) => {
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_conversation", (q) =>
+        q.eq("conversationId", args.conversationId),
+      )
+      .order("asc")
+      .collect();
+
+    return messages.map((m) => ({
+      id: m._id,
+      role: m.role,
+      parts: m.parts.map((p) => {
+        if (p.type === "reasoning") {
+          return {
+            ...p,
+            duration: Math.floor(p.duration / 1000),
+          };
+        }
+        if (p.type === "error") {
+          return { type: "data-error" as const, data: { ...p.error } };
+        }
+        return p;
+      }),
+    }));
   },
 });

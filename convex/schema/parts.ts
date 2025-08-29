@@ -26,17 +26,11 @@ export const SourceDocumentPart = v.object({
   filename: v.optional(v.string()),
 });
 
-export const ImagePart = v.object({
-  type: v.literal("image"),
-  image: v.string(),
-  mediaType: v.string(),
-});
-
 export const FilePart = v.object({
   type: v.literal("file"),
-  data: v.string(),
+  url: v.string(),
   filename: v.optional(v.string()),
-  mediaType: v.optional(v.string()),
+  mediaType: v.string(),
 });
 
 export const ErrorUIPart = v.object({
@@ -49,7 +43,6 @@ export const ErrorUIPart = v.object({
 
 export const MessagePart = v.union(
   TextPart,
-  ImagePart,
   SourceDocumentPart,
   SourceUrlPart,
   ReasoningPart,

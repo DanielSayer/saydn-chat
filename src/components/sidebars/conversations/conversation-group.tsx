@@ -6,10 +6,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useChatStore } from "@/lib/chat-store";
 import type { Conversation } from "@/lib/types";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { nanoid } from "nanoid";
 
 type ConversationGroupProps = {
   title: string;
@@ -35,7 +35,10 @@ function ConversationGroup({
       <SidebarGroupContent>
         <SidebarMenu>
           {conversations.map((conversation) => (
-            <ConversationItem key={nanoid()} conversation={conversation} />
+            <ConversationItem
+              key={conversation._id}
+              conversation={conversation}
+            />
           ))}
         </SidebarMenu>
       </SidebarGroupContent>
@@ -44,12 +47,14 @@ function ConversationGroup({
 }
 
 function ConversationItem({ conversation }: { conversation: Conversation }) {
+  const { conversationId } = useChatStore();
+
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild>
+      <SidebarMenuButton asChild isActive={conversation._id === conversationId}>
         <Link
           to="/chat/$conversationId"
-          params={{ conversationId: conversation.userId }}
+          params={{ conversationId: conversation._id }}
           className="truncate"
         >
           {conversation.title}

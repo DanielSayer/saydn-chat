@@ -1,5 +1,5 @@
 import { groupReasoning } from "@/lib/messages";
-import type { UIMessage } from "@ai-sdk/react";
+import type { SaydnUIMessage } from "@/lib/types";
 import { Actions } from "./ai-elements/actions";
 import {
   MessageContent,
@@ -13,7 +13,7 @@ import {
 import { Response } from "./ai-elements/response";
 import { CopyButton } from "./buttons/copy-button";
 
-function Message(props: { message: UIMessage }) {
+function Message(props: { message: SaydnUIMessage }) {
   return (
     <MessagePrimitive
       from={props.message.role}
@@ -37,6 +37,8 @@ function Message(props: { message: UIMessage }) {
                   <Reasoning
                     key={`${props.message.id}-${i}`}
                     className="w-full"
+                    defaultOpen={!part.duration}
+                    duration={part.duration}
                     isStreaming={part.state === "streaming"}
                   >
                     <ReasoningTrigger />

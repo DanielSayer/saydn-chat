@@ -19,7 +19,7 @@ function ConversationsSidebar() {
   const { results, loadMore, status } = usePaginatedQuery(
     api.conversations.getUserConversations,
     {},
-    { initialNumItems: 10 },
+    { initialNumItems: 50 },
   );
 
   const sentinelRef = useInfiniteScroll({
@@ -27,8 +27,6 @@ function ConversationsSidebar() {
     isLoading: status === "LoadingMore" || status === "LoadingFirstPage",
     onLoadMore: () => loadMore(20),
   });
-
-  console.log(status);
 
   const conversations = useMemo(() => {
     return groupConversationsByTimeBracket(results);

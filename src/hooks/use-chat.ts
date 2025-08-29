@@ -1,5 +1,6 @@
 import { env } from "@/env/client";
 import { useChatStore } from "@/lib/chat-store";
+import type { SaydnUIMessage } from "@/lib/types";
 import { useChat as useAiChat } from "@ai-sdk/react";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { DefaultChatTransport } from "ai";
@@ -10,9 +11,10 @@ const convexSiteUrl = env.VITE_CONVEX_URL.replace(/.cloud$/, ".site");
 
 type UseChatProps = {
   conversationId?: string;
+  initialMessages: SaydnUIMessage[];
 };
 
-export const useChat = ({ conversationId }: UseChatProps) => {
+export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
   const token = useAuthToken();
   const seededNextId = useRef<string | null>(null);
   const { rerenderTrigger, setConversationId } = useChatStore();
@@ -23,8 +25,9 @@ export const useChat = ({ conversationId }: UseChatProps) => {
     return nextId;
   };
 
-  const chat = useAiChat({
+  const chat = useAiChat<SaydnUIMessage>({
     id: conversationId ?? rerenderTrigger,
+    messages: initialMessages,
     transport: new DefaultChatTransport({
       api: `${convexSiteUrl}/api/chat`,
       headers: { Authorization: `Bearer ${token}` },
@@ -39,10 +42,12 @@ export const useChat = ({ conversationId }: UseChatProps) => {
     },
     onData: (message) => {
       if (message.type === "data-conversationId") {
-        if (!conversationId) {
-          if (typeof message.data === "string") {
-            setConversationId(message.data);
-          }
+        if (
+          !conversationId &&
+          message.data &&
+          typeof message.data === "string"
+        ) {
+          setConversationId(message.data);
         }
       }
     },

@@ -7,6 +7,7 @@ export default defineSchema({
   ...authTables,
   conversations: defineTable(Conversation)
     .index("by_user", ["userId"])
+    .index("by_updated_at", ["updatedAt"])
     .searchIndex("search_title", {
       searchField: "title",
       filterFields: ["userId"],
