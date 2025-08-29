@@ -1,5 +1,6 @@
-import { groupReasoning } from "@/lib/messages";
+import { calculateTps, groupReasoning } from "@/lib/messages";
 import type { SaydnUIMessage } from "@/lib/types";
+import { CpuIcon, ZapIcon } from "lucide-react";
 import { Actions } from "./ai-elements/actions";
 import {
   MessageContent,
@@ -53,7 +54,7 @@ function Message(props: { message: SaydnUIMessage }) {
         {props.message.parts.some(
           (p) => "state" in p && p.state === "streaming",
         ) ? null : (
-          <Actions className="flex w-full opacity-0 transition-all duration-100 group-hover:opacity-100 group-[.is-user]:flex-row-reverse">
+          <Actions className="flex w-full items-center gap-2 opacity-0 transition-all duration-100 group-hover:opacity-100 group-[.is-user]:flex-row-reverse">
             <CopyButton
               variant="ghost"
               aria-label="Copy message"
@@ -61,6 +62,30 @@ function Message(props: { message: SaydnUIMessage }) {
                 props.message.parts.find((part) => part.type === "text")?.text
               }
             />
+            <p className="text-muted-foreground text-xs">
+              {props.message.metadata?.modelName}
+            </p>
+            {props.message.metadata?.outputTokens &&
+              props.message.metadata?.firstTokenAt &&
+              props.message.metadata?.serverDurationMs && (
+                <p className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <ZapIcon className="size-3" />
+                  <span>
+                    {calculateTps(
+                      props.message.metadata.firstTokenAt,
+                      props.message.metadata.serverDurationMs,
+                      props.message.metadata.outputTokens,
+                    )}
+                  </span>
+                  tok/s
+                </p>
+              )}
+            {props.message.metadata?.outputTokens && (
+              <p className="text-muted-foreground flex items-center gap-1 text-xs">
+                <CpuIcon className="size-3" />
+                {props.message.metadata.outputTokens} tokens
+              </p>
+            )}
           </Actions>
         )}
       </div>

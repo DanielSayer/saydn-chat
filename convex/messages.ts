@@ -81,6 +81,7 @@ export const getMessagesByConversationId = query({
     return messages.map((m) => ({
       id: m._id,
       role: m.role,
+      metadata: m.metadata,
       parts: m.parts.map((p) => {
         if (p.type === "reasoning") {
           return {

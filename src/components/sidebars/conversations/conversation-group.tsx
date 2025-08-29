@@ -6,6 +6,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useChatStore } from "@/lib/chat-store";
 import type { Conversation } from "@/lib/types";
 import { Link } from "@tanstack/react-router";
@@ -51,15 +56,23 @@ function ConversationItem({ conversation }: { conversation: Conversation }) {
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={conversation._id === conversationId}>
-        <Link
-          to="/chat/$conversationId"
-          params={{ conversationId: conversation._id }}
-          className="truncate"
-        >
-          {conversation.title}
-        </Link>
-      </SidebarMenuButton>
+      <Tooltip delayDuration={300}>
+        <TooltipTrigger asChild>
+          <SidebarMenuButton
+            asChild
+            isActive={conversation._id === conversationId}
+          >
+            <Link
+              to="/chat/$conversationId"
+              params={{ conversationId: conversation._id }}
+              className="truncate"
+            >
+              <span>{conversation.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </TooltipTrigger>
+        <TooltipContent side="top">{conversation.title}</TooltipContent>
+      </Tooltip>
     </SidebarMenuItem>
   );
 }

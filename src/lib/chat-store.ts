@@ -1,8 +1,10 @@
 import { nanoid } from "nanoid";
 import { create } from "zustand";
+import { DEFAULT_MODEL, type OpenAiModel } from "./models";
 
 type ChatState = {
   conversationId: string | undefined;
+  modelId: OpenAiModel;
   rerenderTrigger: string;
   lastProcessedDataIndex: number;
   shouldUpdateQuery: boolean;
@@ -14,6 +16,7 @@ type ChatState = {
 };
 
 type ChatActions = {
+  setModelId: (modelId: OpenAiModel) => void;
   setConversationId: (conversationId: string | undefined) => void;
   setLastProcessedDataIndex: (index: number) => void;
   setShouldUpdateQuery: (should: boolean) => void;
@@ -29,6 +32,7 @@ type ChatActions = {
 
 const initialState: ChatState = {
   conversationId: undefined,
+  modelId: DEFAULT_MODEL,
   rerenderTrigger: nanoid(),
   lastProcessedDataIndex: -1,
   shouldUpdateQuery: false,
@@ -41,7 +45,7 @@ const initialState: ChatState = {
 
 export const useChatStore = create<ChatState & ChatActions>((set) => ({
   ...initialState,
-
+  setModelId: (modelId) => set({ modelId }),
   setConversationId: (conversationId) => set({ conversationId }),
 
   setLastProcessedDataIndex: (lastProcessedDataIndex) =>

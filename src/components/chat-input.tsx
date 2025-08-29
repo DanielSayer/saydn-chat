@@ -14,6 +14,8 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "./ai-elements/prompt-input";
+import { useChatStore } from "@/lib/chat-store";
+import { models, type OpenAiModel } from "@/lib/models";
 
 type ChatInputProps = {
   input: string;
@@ -22,11 +24,9 @@ type ChatInputProps = {
   status: ChatStatus;
 };
 
-const models = [{ name: "GPT-5 (mini)", value: "gpt-5-turbo" }];
-
 function ChatInput({ onSubmit, status, input, setInput }: ChatInputProps) {
   const [webSearch, setWebSearch] = useState(false);
-  const [model, setModel] = useState(models[0].value);
+  const { modelId, setModelId } = useChatStore();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -43,21 +43,18 @@ function ChatInput({ onSubmit, status, input, setInput }: ChatInputProps) {
       <PromptInputToolbar>
         <PromptInputTools>
           <PromptInputModelSelect
-            onValueChange={(value) => {
-              setModel(value);
+            onValueChange={(value: OpenAiModel) => {
+              setModelId(value);
             }}
-            value={model}
+            value={modelId}
           >
             <PromptInputModelSelectTrigger>
               <PromptInputModelSelectValue />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              {models.map((model) => (
-                <PromptInputModelSelectItem
-                  key={model.value}
-                  value={model.value}
-                >
-                  {model.name}
+              {Object.keys(models).map((id) => (
+                <PromptInputModelSelectItem key={id} value={id}>
+                  {models[id]}
                 </PromptInputModelSelectItem>
               ))}
             </PromptInputModelSelectContent>

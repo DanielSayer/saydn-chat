@@ -28,4 +28,13 @@ function groupReasoning(message: SaydnUIMessage): SaydnUIMessage {
   };
 }
 
-export { groupReasoning };
+function calculateTps(
+  firstTokenAt: number,
+  serverDurationMs: number,
+  outputTokens: number,
+) {
+  const outputTime = serverDurationMs - firstTokenAt;
+  return ((outputTokens * 1000) / outputTime).toFixed(2);
+}
+
+export { calculateTps, groupReasoning };

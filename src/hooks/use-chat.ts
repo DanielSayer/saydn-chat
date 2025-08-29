@@ -1,5 +1,6 @@
 import { env } from "@/env/client";
 import { useChatStore } from "@/lib/chat-store";
+import type { OpenAiModel } from "@/lib/models";
 import type { SaydnUIMessage } from "@/lib/types";
 import { useChat as useAiChat } from "@ai-sdk/react";
 import { useAuthToken } from "@convex-dev/auth/react";
@@ -17,7 +18,8 @@ type UseChatProps = {
 export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
   const token = useAuthToken();
   const seededNextId = useRef<string | null>(null);
-  const { rerenderTrigger, setConversationId } = useChatStore();
+  const { rerenderTrigger, setConversationId, modelId, setModelId } =
+    useChatStore();
 
   const getResponseId = () => {
     const nextId = nanoid();
@@ -48,6 +50,11 @@ export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
           typeof message.data === "string"
         ) {
           setConversationId(message.data);
+        }
+      }
+      if (message.type === "data-modelId") {
+        if (!modelId && message.data && typeof message.data === "string") {
+          setModelId(message.data as OpenAiModel);
         }
       }
     },

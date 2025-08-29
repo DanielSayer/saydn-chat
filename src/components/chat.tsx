@@ -1,21 +1,22 @@
 import { useChat } from "@/hooks/use-chat";
+import { useChatStore } from "@/lib/chat-store";
+import { SaydnUIMessage } from "@/lib/types";
+import { getFirstName } from "@/lib/utils";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 import { useConvexAuth, useQuery } from "convex/react";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "./ai-elements/conversation";
+import { ChatEmptyState } from "./chat-empty-state";
 import { ChatInput } from "./chat-input";
 import { DotsLoader } from "./loaders/dots-loader";
 import { Message } from "./message";
 import { SignupMessagePrompt } from "./sign-up-message-prompt";
-import { api } from "convex/_generated/api";
-import { Id } from "convex/_generated/dataModel";
-import { SaydnUIMessage } from "@/lib/types";
-import { getFirstName } from "@/lib/utils";
-import { ChatEmptyState } from "./chat-empty-state";
-import { useState } from "react";
-import { toast } from "sonner";
 
 type ChatProps = {
   conversationId: string | undefined;
@@ -25,6 +26,7 @@ type ChatProps = {
 function ChatContent({ conversationId, initialMessages }: ChatProps) {
   const user = useQuery(api.me.get);
   const [input, setInput] = useState("");
+  const { modelId } = useChatStore();
   const { status, messages, sendMessage, stop, getResponseId } = useChat({
     conversationId,
     initialMessages,
@@ -57,6 +59,7 @@ function ChatContent({ conversationId, initialMessages }: ChatProps) {
       { text: input },
       {
         body: {
+          modelId,
           conversationId,
           responseId: getResponseId(),
         },
@@ -98,11 +101,8 @@ function ChatContent({ conversationId, initialMessages }: ChatProps) {
   );
 }
 
-export function Chat({
-  conversationId,
-}: {
-  conversationId: string | undefined;
-}) {
+export function Chat() {
+  const { conversationId } = useChatStore();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const shouldRequestData = isAuthenticated && !!conversationId && !isLoading;
 

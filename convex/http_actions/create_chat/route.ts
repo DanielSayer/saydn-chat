@@ -15,12 +15,14 @@ import { convertOutputToMessagePart } from "../../lib/transformers/convert_strea
 import { convertToDbMessage } from "../../lib/transformers/convert_ui_message_to_db_message";
 import { generateTitle } from "./generate_title";
 import { makeDurationTransform } from "./stream_transform";
+import { DEFAULT_MODEL, models, type OpenAiModel } from "@/lib/models";
 
 export const createChat = httpAction(async (ctx, req) => {
   const startAt = Date.now();
   const body: {
     conversationId?: string;
     responseId: string;
+    modelId: OpenAiModel;
     messages: UIMessage[];
   } = await req.json();
 
@@ -48,6 +50,9 @@ export const createChat = httpAction(async (ctx, req) => {
     },
   );
 
+  const selectedModel: OpenAiModel =
+    body.modelId in models ? body.modelId : DEFAULT_MODEL;
+
   const streamStartedAt = Date.now();
   const reasoningDurations: number[] = [];
   let firstTokenAt: number | null = null;
@@ -56,6 +61,13 @@ export const createChat = httpAction(async (ctx, req) => {
       writer.write({
         type: "data-conversationId",
         data: conversationId,
+        transient: true,
+      });
+
+      writer.write({
+        type: "data-modelId",
+        data: selectedModel,
+        transient: true,
       });
 
       const modelMessages = convertToModelMessages(body.messages);
@@ -68,7 +80,7 @@ export const createChat = httpAction(async (ctx, req) => {
       }
 
       const result = streamText({
-        model: openai("gpt-5-nano"),
+        model: openai(selectedModel),
         system: "You are a helpful assistant.",
         experimental_transform: () => {
           return makeDurationTransform({
@@ -97,6 +109,7 @@ export const createChat = httpAction(async (ctx, req) => {
             parts: parts,
             metadata: {
               modelId: response.modelId,
+              modelName: models[selectedModel],
               inputTokens: totalUsage.inputTokens,
               outputTokens: totalUsage.outputTokens,
               reasoningTokens: totalUsage.reasoningTokens,
