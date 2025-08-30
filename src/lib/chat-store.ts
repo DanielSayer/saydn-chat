@@ -32,7 +32,8 @@ type ChatActions = {
 
 const initialState: ChatState = {
   conversationId: undefined,
-  modelId: DEFAULT_MODEL,
+  modelId:
+    (window.localStorage.getItem("modelId") as OpenAiModel) ?? DEFAULT_MODEL,
   rerenderTrigger: nanoid(),
   lastProcessedDataIndex: -1,
   shouldUpdateQuery: false,
@@ -45,7 +46,10 @@ const initialState: ChatState = {
 
 export const useChatStore = create<ChatState & ChatActions>((set) => ({
   ...initialState,
-  setModelId: (modelId) => set({ modelId }),
+  setModelId: (modelId) => {
+    window.localStorage.setItem("modelId", modelId);
+    set({ modelId });
+  },
   setConversationId: (conversationId) => set({ conversationId }),
 
   setLastProcessedDataIndex: (lastProcessedDataIndex) =>
