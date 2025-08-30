@@ -16,6 +16,7 @@ import { convertToDbMessage } from "../../lib/transformers/convert_ui_message_to
 import { generateTitle } from "./generate_title";
 import { makeDurationTransform } from "./stream_transform";
 import { DEFAULT_MODEL, models, type OpenAiModel } from "@/lib/models";
+import { getSystemPrompt } from "../../lib/prompts";
 
 export const createChat = httpAction(async (ctx, req) => {
   const startAt = Date.now();
@@ -81,7 +82,7 @@ export const createChat = httpAction(async (ctx, req) => {
 
       const result = streamText({
         model: openai(selectedModel),
-        system: "You are a helpful assistant.",
+        system: getSystemPrompt(models[selectedModel]),
         experimental_transform: () => {
           return makeDurationTransform({
             onStart: ({ now }) => {
@@ -124,7 +125,23 @@ export const createChat = httpAction(async (ctx, req) => {
         },
       });
 
-      writer.merge(result.toUIMessageStream());
+      writer.merge(
+        result.toUIMessageStream({
+          messageMetadata: ({ part }) => {
+            if (part.type === "finish") {
+              return {
+                modelId: selectedModel,
+                modelName: models[selectedModel],
+                inputTokens: part.totalUsage.inputTokens,
+                outputTokens: part.totalUsage.outputTokens,
+                reasoningTokens: part.totalUsage.reasoningTokens,
+                serverDurationMs: Date.now() - streamStartedAt,
+                firstTokenAt: firstTokenAt ? firstTokenAt - startAt : undefined,
+              };
+            }
+          },
+        }),
+      );
     },
   });
 

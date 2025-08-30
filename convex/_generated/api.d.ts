@@ -15,6 +15,7 @@ import type * as http from "../http.js";
 import type * as http_actions_create_chat_generate_title from "../http_actions/create_chat/generate_title.js";
 import type * as http_actions_create_chat_route from "../http_actions/create_chat/route.js";
 import type * as http_actions_create_chat_stream_transform from "../http_actions/create_chat/stream_transform.js";
+import type * as lib_prompts from "../lib/prompts.js";
 import type * as lib_transformers_convert_stream_output_to_message_parts from "../lib/transformers/convert_stream_output_to_message_parts.js";
 import type * as lib_transformers_convert_ui_message_to_db_message from "../lib/transformers/convert_ui_message_to_db_message.js";
 import type * as me from "../me.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   "http_actions/create_chat/generate_title": typeof http_actions_create_chat_generate_title;
   "http_actions/create_chat/route": typeof http_actions_create_chat_route;
   "http_actions/create_chat/stream_transform": typeof http_actions_create_chat_stream_transform;
+  "lib/prompts": typeof lib_prompts;
   "lib/transformers/convert_stream_output_to_message_parts": typeof lib_transformers_convert_stream_output_to_message_parts;
   "lib/transformers/convert_ui_message_to_db_message": typeof lib_transformers_convert_ui_message_to_db_message;
   me: typeof me;

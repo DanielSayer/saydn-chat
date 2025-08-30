@@ -8,7 +8,7 @@ export const Response = memo(
   ({ className, ...props }: ResponseProps) => (
     <Streamdown
       className={cn(
-        "[&>div>div]:bg-secondary size-full [&_pre]:!bg-transparent [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+        "[&>div>div]:bg-secondary size-full [&_pre]:overflow-x-scroll [&_pre]:!bg-transparent [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
         className,
       )}
       {...props}
