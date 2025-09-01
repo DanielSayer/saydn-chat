@@ -101,8 +101,11 @@ function ChatContent({ conversationId, initialMessages }: ChatProps) {
   );
 }
 
-export function Chat() {
-  const { conversationId } = useChatStore();
+export function Chat({
+  conversationId,
+}: {
+  conversationId: string | undefined;
+}) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const shouldRequestData = isAuthenticated && !!conversationId && !isLoading;
 
