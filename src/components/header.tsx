@@ -1,4 +1,5 @@
 import { UserButton } from "./buttons/user-button";
+import { ThemeSwitcher } from "./themes/theme-switcher";
 import { SidebarTrigger } from "./ui/sidebar";
 
 function Header() {
@@ -12,6 +13,7 @@ function Header() {
           </div>
         </div>
         <div className="bg-background/10 pointer-events-auto flex items-center space-x-2 rounded-xl p-2 backdrop-blur-sm">
+          <ThemeSwitcher />
           <div className="bg-border h-4 w-px" />
           <UserButton />
         </div>

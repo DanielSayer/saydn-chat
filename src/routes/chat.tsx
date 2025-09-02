@@ -12,7 +12,7 @@ function RouteComponent() {
     <SidebarProvider>
       <ConversationsSidebar />
       <SidebarInset>
-        <div className="grainy flex h-dvh flex-col rounded-sm antialiased md:h-[calc(100vh-1rem)]">
+        <div className="flex h-dvh flex-col rounded-sm antialiased md:h-[calc(100vh-1rem)]">
           <Header />
           <Outlet />
         </div>

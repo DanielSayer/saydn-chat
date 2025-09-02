@@ -1,15 +1,16 @@
+import { ThemeProvider } from "@/components/themes/theme-provider";
+import { ThemeScript } from "@/components/themes/theme-script";
+import { Toaster } from "@/components/ui/sonner";
+import globals_css from "@/styles/globals.css?url";
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
+  ClientOnly,
   HeadContent,
   Outlet,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-
-import globals_css from "@/styles/globals.css?url";
-import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -44,13 +45,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <ThemeScript />
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ClientOnly>
+          <ThemeProvider>{children}</ThemeProvider>
+        </ClientOnly>
         <Scripts />
         <Toaster />
-        <ReactQueryDevtools />
       </body>
     </html>
   );
