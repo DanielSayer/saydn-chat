@@ -11,22 +11,19 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as ChatIndexRouteImport } from './routes/chat.index'
+import { Route as SettingsProfileRouteImport } from './routes/settings/profile'
+import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
 import { Route as ChatConversationIdRouteImport } from './routes/chat.$conversationId'
 
 const AuthSignUpLazyRouteImport = createFileRoute('/auth/sign-up')()
 const AuthSignInLazyRouteImport = createFileRoute('/auth/sign-in')()
 
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
@@ -40,6 +37,11 @@ const ChatRoute = ChatRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRouteRoute = SettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RouteRoute = RouteRouteImport.update({
@@ -62,6 +64,16 @@ const AuthSignInLazyRoute = AuthSignInLazyRouteImport.update({
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/auth/sign-in.lazy').then((d) => d.Route))
+const SettingsProfileRoute = SettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
+  id: '/appearance',
+  path: '/appearance',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
 const ChatConversationIdRoute = ChatConversationIdRouteImport.update({
   id: '/$conversationId',
   path: '/$conversationId',
@@ -70,21 +82,25 @@ const ChatConversationIdRoute = ChatConversationIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof RouteRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/chat': typeof ChatRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/settings': typeof SettingsRoute
   '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat/': typeof ChatIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof RouteRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/settings': typeof SettingsRoute
   '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat': typeof ChatIndexRoute
@@ -92,11 +108,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof RouteRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/chat': typeof ChatRouteWithChildren
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/settings': typeof SettingsRoute
   '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/auth/sign-in': typeof AuthSignInLazyRoute
   '/auth/sign-up': typeof AuthSignUpLazyRoute
   '/chat/': typeof ChatIndexRoute
@@ -105,32 +123,38 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/settings'
     | '/about'
     | '/chat'
     | '/privacy-policy'
-    | '/settings'
     | '/chat/$conversationId'
+    | '/settings/appearance'
+    | '/settings/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/settings'
     | '/about'
     | '/privacy-policy'
-    | '/settings'
     | '/chat/$conversationId'
+    | '/settings/appearance'
+    | '/settings/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat'
   id:
     | '__root__'
     | '/'
+    | '/settings'
     | '/about'
     | '/chat'
     | '/privacy-policy'
-    | '/settings'
     | '/chat/$conversationId'
+    | '/settings/appearance'
+    | '/settings/profile'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/chat/'
@@ -138,23 +162,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   RouteRoute: typeof RouteRoute
+  SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ChatRoute: typeof ChatRouteWithChildren
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  SettingsRoute: typeof SettingsRoute
   AuthSignInLazyRoute: typeof AuthSignInLazyRoute
   AuthSignUpLazyRoute: typeof AuthSignUpLazyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacy-policy': {
       id: '/privacy-policy'
       path: '/privacy-policy'
@@ -174,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -204,6 +228,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/profile': {
+      id: '/settings/profile'
+      path: '/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/appearance': {
+      id: '/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof SettingsAppearanceRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
     '/chat/$conversationId': {
       id: '/chat/$conversationId'
       path: '/$conversationId'
@@ -213,6 +251,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface SettingsRouteRouteChildren {
+  SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsProfileRoute: typeof SettingsProfileRoute
+}
+
+const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
+  SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsProfileRoute: SettingsProfileRoute,
+}
+
+const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
+  SettingsRouteRouteChildren,
+)
 
 interface ChatRouteChildren {
   ChatConversationIdRoute: typeof ChatConversationIdRoute
@@ -228,10 +280,10 @@ const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   RouteRoute: RouteRoute,
+  SettingsRouteRoute: SettingsRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ChatRoute: ChatRouteWithChildren,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  SettingsRoute: SettingsRoute,
   AuthSignInLazyRoute: AuthSignInLazyRoute,
   AuthSignUpLazyRoute: AuthSignUpLazyRoute,
 }
