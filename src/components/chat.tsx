@@ -19,12 +19,12 @@ import { Message } from "./message";
 import { SignupMessagePrompt } from "./sign-up-message-prompt";
 
 type ChatProps = {
-  conversationId: string | undefined;
   initialMessages: SaydnUIMessage[];
 };
 
-function ChatContent({ conversationId, initialMessages }: ChatProps) {
+function ChatContent({ initialMessages }: ChatProps) {
   const user = useQuery(api.me.get);
+  const { conversationId } = useChatStore();
   const [input, setInput] = useState("");
   const { modelId } = useChatStore();
   const { status, messages, sendMessage, stop, getResponseId } = useChat({
@@ -140,10 +140,5 @@ export function Chat({
     );
   }
 
-  return (
-    <ChatContent
-      conversationId={conversationId}
-      initialMessages={messages ?? []}
-    />
-  );
+  return <ChatContent initialMessages={messages ?? []} />;
 }

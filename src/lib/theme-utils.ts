@@ -30,6 +30,7 @@ export type FetchedTheme = {
   error?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function convertToThemePreset(externalTheme: any): ThemePreset {
   if (externalTheme.cssVars) {
     return {
@@ -44,7 +45,8 @@ export function convertToThemePreset(externalTheme: any): ThemePreset {
   throw new Error("Unsupported theme format");
 }
 
-export function getThemeName(themeData: any, url: string): string {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getThemeName(themeData: any): string {
   if (themeData.name) {
     return themeData.name
       .replace(/[-_]/g, " ")
@@ -70,7 +72,7 @@ export async function fetchThemeFromUrl(url: string): Promise<FetchedTheme> {
     }
     const themeData = await response.json();
     const themePreset = convertToThemePreset(themeData);
-    const themeName = getThemeName(themeData, url);
+    const themeName = getThemeName(themeData);
     return {
       name: themeName,
       preset: themePreset,
@@ -80,7 +82,7 @@ export async function fetchThemeFromUrl(url: string): Promise<FetchedTheme> {
     const errorMessage =
       err instanceof Error ? err.message : "Failed to fetch theme";
     return {
-      name: getThemeName({}, url),
+      name: getThemeName({}),
       preset: { cssVars: { theme: {}, light: {}, dark: {} } },
       url,
       error: errorMessage,

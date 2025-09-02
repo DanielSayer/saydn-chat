@@ -18,8 +18,7 @@ type UseChatProps = {
 export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
   const token = useAuthToken();
   const seededNextId = useRef<string | null>(null);
-  const { rerenderTrigger, setConversationId, modelId, setModelId } =
-    useChatStore();
+  const { setConversationId, modelId, setModelId } = useChatStore();
 
   const getResponseId = () => {
     const nextId = nanoid();
@@ -28,7 +27,6 @@ export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
   };
 
   const chat = useAiChat<SaydnUIMessage>({
-    id: conversationId ?? rerenderTrigger,
     messages: initialMessages,
     transport: new DefaultChatTransport({
       api: `${convexSiteUrl}/api/chat`,

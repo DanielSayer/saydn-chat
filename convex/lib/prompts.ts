@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 function getSystemPrompt(modelName: string) {
   const now = new Date().toUTCString();
 

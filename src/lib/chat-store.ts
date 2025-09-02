@@ -1,47 +1,21 @@
-import { nanoid } from "nanoid";
 import { create } from "zustand";
 import { DEFAULT_MODEL, type OpenAiModel } from "./models";
 
 type ChatState = {
   conversationId: string | undefined;
   modelId: OpenAiModel;
-  rerenderTrigger: string;
-  lastProcessedDataIndex: number;
-  shouldUpdateQuery: boolean;
-  skipNextDataCheck: boolean;
-  attachedStreamIds: Record<string, string>;
-  pendingStreams: Record<string, boolean>;
-  targetFromMessageId: string | undefined;
-  targetMode: "normal" | "edit" | "retry";
 };
 
 type ChatActions = {
   setModelId: (modelId: OpenAiModel) => void;
   setConversationId: (conversationId: string | undefined) => void;
-  setLastProcessedDataIndex: (index: number) => void;
-  setShouldUpdateQuery: (should: boolean) => void;
-  setSkipNextDataCheck: (skip: boolean) => void;
   resetChat: () => void;
-  triggerRerender: () => void;
-  setAttachedStreamId: (conversationId: string, streamId: string) => void;
-  setPendingStream: (conversationId: string, pending: boolean) => void;
-  setTargetFromMessageId: (messageId: string | undefined) => void;
-  setTargetMode: (mode: "normal" | "edit" | "retry") => void;
-  setRerenderTrigger: (rerenderTrigger: string) => void;
 };
 
 const initialState: ChatState = {
   conversationId: undefined,
   modelId:
     (window.localStorage.getItem("modelId") as OpenAiModel) ?? DEFAULT_MODEL,
-  rerenderTrigger: nanoid(),
-  lastProcessedDataIndex: -1,
-  shouldUpdateQuery: false,
-  skipNextDataCheck: true,
-  attachedStreamIds: {},
-  pendingStreams: {},
-  targetFromMessageId: undefined,
-  targetMode: "normal",
 };
 
 export const useChatStore = create<ChatState & ChatActions>((set) => ({
@@ -51,51 +25,7 @@ export const useChatStore = create<ChatState & ChatActions>((set) => ({
     set({ modelId });
   },
   setConversationId: (conversationId) => set({ conversationId }),
-
-  setLastProcessedDataIndex: (lastProcessedDataIndex) =>
-    set({ lastProcessedDataIndex }),
-  setShouldUpdateQuery: (shouldUpdateQuery) => set({ shouldUpdateQuery }),
-  setSkipNextDataCheck: (skipNextDataCheck) => set({ skipNextDataCheck }),
-  setRerenderTrigger: (rerenderTrigger) => set({ rerenderTrigger }),
   resetChat: () => {
-    set({
-      ...initialState,
-      rerenderTrigger: nanoid(),
-      attachedStreamIds: {},
-      targetFromMessageId: undefined,
-      lastProcessedDataIndex: -1,
-      skipNextDataCheck: true,
-      targetMode: "normal",
-      conversationId: undefined,
-    });
+    set({ ...initialState });
   },
-
-  triggerRerender: () => {
-    set({ rerenderTrigger: nanoid() });
-  },
-
-  setAttachedStreamId: (conversationId, streamId) => {
-    if (!conversationId) return;
-    set((state) => ({
-      attachedStreamIds: {
-        ...state.attachedStreamIds,
-        [conversationId]: streamId,
-      },
-    }));
-  },
-
-  setPendingStream: (conversationId, pending) => {
-    if (!conversationId) return;
-    set((state) => ({
-      pendingStreams: {
-        ...state.pendingStreams,
-        [conversationId]: pending,
-      },
-    }));
-  },
-
-  setTargetFromMessageId: (messageId) =>
-    set({ targetFromMessageId: messageId }),
-
-  setTargetMode: (mode) => set({ targetMode: mode }),
 }));

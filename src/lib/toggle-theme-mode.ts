@@ -8,8 +8,6 @@ export const toggleThemeMode = () => {
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
-  console.log("prefersReducedMotion", prefersReducedMotion);
-
   if (!document.startViewTransition || prefersReducedMotion) {
     useThemeStore.getState().setThemeState({
       ...themeState,
