@@ -1,17 +1,28 @@
 import { SignUp } from "@/components/auth/sign-up";
+import { DotsLoader } from "@/components/loaders/dots-loader";
 import { Button } from "@/components/ui/button";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { useConvexAuth } from "convex/react";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 
 export const Route = createLazyFileRoute("/auth/sign-up")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = Route.useNavigate();
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
+  useEffect(() => {
+    if (isAuthenticated || isLoading) return;
+    navigate({ to: "/" });
+  }, [isAuthenticated, isLoading]);
+
   return (
     <main className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
       {/* Left side - Background Image */}
-      <div className="hidden lg:block bg-accent" />
+      <div className="bg-accent hidden lg:block" />
 
       {/* Right side - Auth Content */}
       <div className="relative flex flex-col items-center justify-center gap-4 p-4 sm:p-6 md:p-8">
@@ -20,7 +31,7 @@ function RouteComponent() {
             <Button
               variant="ghost"
               size="sm"
-              className="gap-2 text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Back</span>
@@ -28,7 +39,7 @@ function RouteComponent() {
           </Link>
         </div>
         <div className="flex w-full max-w-sm items-center justify-center gap-4 sm:max-w-md lg:max-w-lg">
-          <SignUp />
+          {isLoading ? <DotsLoader /> : <SignUp />}
         </div>
       </div>
     </main>
