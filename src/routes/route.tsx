@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useConvexAuth } from "convex/react";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -14,10 +15,18 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
+  const { isAuthenticated } = useConvexAuth();
   const navigate = Route.useNavigate();
   const [input, setInput] = useState("");
   const handleSubmit = () => {
     if (!input.trim()) return;
+    if (!isAuthenticated) {
+      navigate({
+        to: "/auth/sign-in",
+      });
+      return;
+    }
+
     navigate({
       to: "/chat",
       search: { prompt: input },

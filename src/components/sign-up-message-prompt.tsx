@@ -26,13 +26,13 @@ export const SignupMessagePrompt = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <div className="mx-auto mb-4 h-16 w-16 rounded-full border dark:border-0 flex items-center justify-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border dark:border-0">
             <MessageCircleHeart className="size-8 stroke-1" />
           </div>
-          <h1 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text font-bold text-4xl text-transparent tracking-tight">
+          <h1 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent">
             saydn.chat
           </h1>
-          <p className="mt-1 font-medium text-muted-foreground text-sm italic">
+          <p className="text-muted-foreground mt-1 text-sm font-medium italic">
             the best ai chat app
           </p>
         </motion.div>
@@ -57,7 +57,7 @@ export const SignupMessagePrompt = () => {
         initial={{ opacity: 0, y: 0 }}
         animate={{ opacity: 0.4, y: 0 }}
         transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
-        className="md:-top-10 pointer-events-none fixed inset-x-0 top-0 z-1 mx-auto w-full max-w-none opacity-40 md:absolute md:h-[50rem] md:w-[50rem] md:max-w-[90vw] dark:opacity-20"
+        className="pointer-events-none fixed inset-x-0 top-0 z-1 mx-auto w-full max-w-none opacity-40 md:absolute md:-top-10 md:h-[50rem] md:w-[50rem] md:max-w-[90vw] dark:opacity-20"
         style={{
           mask: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 80%)",
           WebkitMask:
