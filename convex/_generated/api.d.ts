@@ -25,6 +25,7 @@ import type * as schema_conversations from "../schema/conversations.js";
 import type * as schema_messages from "../schema/messages.js";
 import type * as schema_parts from "../schema/parts.js";
 import type * as schema_usage from "../schema/usage.js";
+import type * as schema_users from "../schema/users.js";
 
 import type {
   ApiFromModules,
@@ -58,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   "schema/messages": typeof schema_messages;
   "schema/parts": typeof schema_parts;
   "schema/usage": typeof schema_usage;
+  "schema/users": typeof schema_users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

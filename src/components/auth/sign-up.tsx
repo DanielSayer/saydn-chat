@@ -55,6 +55,7 @@ function SignUp() {
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         password: data.password,
+        role: "user",
       });
     },
     onSuccess: async () => {
@@ -160,7 +161,7 @@ function SignUp() {
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="hello@t3.gg"
+                            placeholder="hello@saydn.chat"
                             autoComplete="email"
                             {...field}
                           />
