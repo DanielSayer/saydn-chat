@@ -1,3 +1,4 @@
+import { DotsLoader } from "@/components/loaders/dots-loader";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -7,6 +8,7 @@ import {
   useLocation,
   useNavigate,
 } from "@tanstack/react-router";
+import { useConvexAuth } from "convex/react";
 import {
   ArrowLeft,
   BarChart3,
@@ -67,6 +69,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -81,6 +84,14 @@ function SettingsPage() {
       });
     }
   }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({
+        to: "/auth/sign-in",
+      });
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="bg-background flex h-screen flex-col overflow-y-auto">
@@ -138,7 +149,13 @@ function SettingsPage() {
           {/* Main Content */}
           <div className="col-span-3 flex-1">
             <div className="space-y-6 p-0.5 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto">
-              <Outlet />
+              {isLoading ? (
+                <div className="flex h-full items-center justify-center pt-20">
+                  <DotsLoader size="lg" />
+                </div>
+              ) : (
+                <Outlet />
+              )}
             </div>
           </div>
         </div>

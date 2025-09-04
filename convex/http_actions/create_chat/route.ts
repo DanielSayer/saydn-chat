@@ -106,7 +106,9 @@ export const createChat = httpAction(async (ctx, req) => {
           const parts = convertOutputToMessagePart(content, reasoningDurations);
 
           await ctx.runMutation(internal.messages.updateMessage, {
+            userId: userId,
             messageId: convexAssistantMessageId,
+            conversationId: conversationId as Id<"conversations">,
             parts: parts,
             metadata: {
               modelId: response.modelId,

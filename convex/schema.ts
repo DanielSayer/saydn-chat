@@ -1,7 +1,8 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { Conversation } from "./schema/conversations";
-import { authTables } from "@convex-dev/auth/server";
 import { Message } from "./schema/messages";
+import { Usage } from "./schema/usage";
 
 export default defineSchema({
   ...authTables,
@@ -16,4 +17,5 @@ export default defineSchema({
   messages: defineTable(Message)
     .index("by_conversation", ["conversationId"])
     .index("by_message", ["messageId"]),
+  usage: defineTable(Usage).index("by_user_day", ["userId", "daysSinceEpoch"]),
 });

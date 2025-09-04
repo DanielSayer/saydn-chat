@@ -47,6 +47,8 @@ export const createMessage = internalMutation({
 
 export const updateMessage = internalMutation({
   args: {
+    userId: v.string(),
+    conversationId: v.id("conversations"),
     messageId: v.id("messages"),
     parts: v.array(MessagePart),
     metadata: MessageMetadata,
@@ -61,6 +63,16 @@ export const updateMessage = internalMutation({
     await ctx.db.patch(args.messageId, {
       parts: args.parts,
       metadata: args.metadata,
+    });
+
+    await ctx.db.insert("usage", {
+      userId: args.userId,
+      modelId: args.metadata.modelId ?? "unknown",
+      modelName: args.metadata.modelName ?? "unknown",
+      inputTokens: args.metadata.inputTokens ?? 0,
+      outputTokens: args.metadata.outputTokens ?? 0,
+      reasoningTokens: args.metadata.reasoningTokens ?? 0,
+      daysSinceEpoch: Math.floor(Date.now() / (24 * 60 * 60 * 1000)),
     });
   },
 });
