@@ -10,7 +10,7 @@ import { groupConversationsByTimeBracket } from "@/lib/conversations";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { api } from "convex/_generated/api";
-import { usePaginatedQuery } from "convex/react";
+import { useConvexAuth, usePaginatedQuery } from "convex/react";
 import { Loader2, PinIcon, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ConversationGroup } from "./conversation-group";
@@ -18,6 +18,7 @@ import { useChatStore } from "@/lib/chat-store";
 import { SearchDialog } from "./search-dialog";
 
 function ConversationsSidebar() {
+  const { isAuthenticated } = useConvexAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { resetChat } = useChatStore();
   const { results, loadMore, status } = usePaginatedQuery(
@@ -101,7 +102,9 @@ function ConversationsSidebar() {
           </p>
         )}
       </SidebarContent>
-      <SearchDialog isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
+      {isAuthenticated && (
+        <SearchDialog isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
+      )}
     </Sidebar>
   );
 }

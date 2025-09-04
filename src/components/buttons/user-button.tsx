@@ -28,7 +28,7 @@ export function UserButton() {
   const { signOut } = useAuthActions();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
-  const currentUser = useQuery(api.me.get);
+  const currentUser = useQuery(api.me.get, isAuthenticated ? {} : "skip");
 
   if (isLoading) {
     return (

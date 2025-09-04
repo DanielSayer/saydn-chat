@@ -1,7 +1,7 @@
-import { v } from "convex/values";
-import { internalMutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { paginationOptsValidator } from "convex/server";
+import { v } from "convex/values";
+import { internalMutation, query } from "./_generated/server";
 
 export const createConversation = internalMutation({
   args: {
@@ -46,8 +46,13 @@ export const getUserConversations = query({
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
-      throw new Error("Unauthorized");
+      return {
+        page: [],
+        isDone: true,
+        continueCursor: "",
+      };
     }
+
     const conversationsQuery = ctx.db
       .query("conversations")
       .withIndex("by_updated_at")
