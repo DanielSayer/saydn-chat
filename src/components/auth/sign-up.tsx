@@ -55,7 +55,6 @@ function SignUp() {
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         password: data.password,
-        role: "user",
       });
     },
     onSuccess: async () => {
