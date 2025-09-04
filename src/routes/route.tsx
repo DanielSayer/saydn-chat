@@ -7,12 +7,23 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = Route.useNavigate();
+  const [input, setInput] = useState("");
+  const handleSubmit = () => {
+    if (!input.trim()) return;
+    navigate({
+      to: "/chat",
+      search: { prompt: input },
+    });
+  };
+
   return (
     <div className="bg-background relative flex min-h-screen w-full flex-col items-center justify-center gap-8 overflow-hidden rounded-lg p-20">
       <AnimatedGridPattern
@@ -62,6 +73,9 @@ function RouteComponent() {
             "What is the meaning of life?",
             "Are black holes real?",
           ]}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onSubmit={handleSubmit}
         />
       </div>
       <div className="flex items-center gap-1">

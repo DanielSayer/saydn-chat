@@ -5,7 +5,7 @@ import { getFirstName } from "@/lib/utils";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useConvexAuth, useQuery } from "convex/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Conversation,
@@ -20,11 +20,13 @@ import { SignupMessagePrompt } from "./sign-up-message-prompt";
 
 type ChatProps = {
   initialMessages: SaydnUIMessage[];
+  initialPrompt?: string | undefined;
 };
 
-function ChatContent({ initialMessages }: ChatProps) {
+function ChatContent({ initialMessages, initialPrompt }: ChatProps) {
   const user = useQuery(api.me.get);
   const { conversationId } = useChatStore();
+  const hasSentInitialMessage = useRef(false);
   const [input, setInput] = useState("");
   const { modelId } = useChatStore();
   const { status, messages, sendMessage, stop, getResponseId } = useChat({
@@ -67,6 +69,23 @@ function ChatContent({ initialMessages }: ChatProps) {
     );
   };
 
+  useEffect(() => {
+    if (!initialPrompt || !!conversationId || hasSentInitialMessage.current)
+      return;
+
+    hasSentInitialMessage.current = true;
+    sendMessage(
+      { text: initialPrompt },
+      {
+        body: {
+          modelId,
+          conversationId: undefined,
+          responseId: getResponseId(),
+        },
+      },
+    );
+  }, [initialPrompt, conversationId]);
+
   return (
     <div className="relative size-full">
       <div className="flex h-full flex-col pb-4">
@@ -103,8 +122,10 @@ function ChatContent({ initialMessages }: ChatProps) {
 
 export function Chat({
   conversationId,
+  initialPrompt,
 }: {
   conversationId: string | undefined;
+  initialPrompt?: string | undefined;
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const shouldRequestData = isAuthenticated && !!conversationId && !isLoading;
@@ -140,5 +161,10 @@ export function Chat({
     );
   }
 
-  return <ChatContent initialMessages={messages ?? []} />;
+  return (
+    <ChatContent
+      initialMessages={messages ?? []}
+      initialPrompt={initialPrompt}
+    />
+  );
 }

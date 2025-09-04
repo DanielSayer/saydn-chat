@@ -212,7 +212,7 @@ export function PlaceholdersAndVanishInput({
       <button
         disabled={!value}
         type="submit"
-        className="absolute top-1/2 right-2 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black transition duration-200 disabled:bg-gray-100 dark:bg-zinc-900 dark:disabled:bg-zinc-800"
+        className="bg-primary disabled:bg-primary/50 absolute top-1/2 right-2 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full transition duration-200"
       >
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +224,7 @@ export function PlaceholdersAndVanishInput({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="h-4 w-4 text-gray-300"
+          className="text-primary-foreground h-4 w-4"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <motion.path

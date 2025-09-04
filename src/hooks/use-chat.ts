@@ -6,7 +6,7 @@ import { useChat as useAiChat } from "@ai-sdk/react";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { DefaultChatTransport } from "ai";
 import { nanoid } from "nanoid";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 
 const convexSiteUrl = env.VITE_CONVEX_URL.replace(/.cloud$/, ".site");
 
@@ -20,11 +20,11 @@ export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
   const seededNextId = useRef<string | null>(null);
   const { setConversationId, modelId, setModelId } = useChatStore();
 
-  const getResponseId = () => {
+  const getResponseId = useCallback(() => {
     const nextId = nanoid();
     seededNextId.current = nextId;
     return nextId;
-  };
+  }, []);
 
   const chat = useAiChat<SaydnUIMessage>({
     messages: initialMessages,
@@ -32,6 +32,7 @@ export const useChat = ({ conversationId, initialMessages }: UseChatProps) => {
       api: `${convexSiteUrl}/api/chat`,
       headers: { Authorization: `Bearer ${token}` },
     }),
+
     generateId: () => {
       if (!seededNextId.current) {
         return nanoid();
