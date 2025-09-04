@@ -54,7 +54,6 @@ export const createChat = httpAction(async (ctx, req) => {
   const selectedModel: OpenAiModel =
     body.modelId in models ? body.modelId : DEFAULT_MODEL;
 
-  const streamStartedAt = Date.now();
   const reasoningDurations: number[] = [];
   let firstTokenAt: number | null = null;
   const stream = createUIMessageStream({
@@ -116,7 +115,7 @@ export const createChat = httpAction(async (ctx, req) => {
               inputTokens: totalUsage.inputTokens,
               outputTokens: totalUsage.outputTokens,
               reasoningTokens: totalUsage.reasoningTokens,
-              serverDurationMs: Date.now() - streamStartedAt,
+              serverDurationMs: Date.now() - startAt,
               firstTokenAt: firstTokenAt ? firstTokenAt - startAt : undefined,
             },
           });
@@ -137,7 +136,7 @@ export const createChat = httpAction(async (ctx, req) => {
                 inputTokens: part.totalUsage.inputTokens,
                 outputTokens: part.totalUsage.outputTokens,
                 reasoningTokens: part.totalUsage.reasoningTokens,
-                serverDurationMs: Date.now() - streamStartedAt,
+                serverDurationMs: Date.now() - startAt,
                 firstTokenAt: firstTokenAt ? firstTokenAt - startAt : undefined,
               };
             }
