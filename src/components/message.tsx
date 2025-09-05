@@ -83,7 +83,9 @@ function Message(props: { message: SaydnUIMessage }) {
             {props.message.metadata?.outputTokens && (
               <p className="text-muted-foreground flex items-center gap-1 text-xs">
                 <CpuIcon className="size-3" />
-                {props.message.metadata.outputTokens} tokens
+                {props.message.metadata.outputTokens +
+                  (props.message.metadata?.reasoningTokens ?? 0)}{" "}
+                tokens
               </p>
             )}
           </Actions>

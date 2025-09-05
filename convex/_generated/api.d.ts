@@ -9,6 +9,7 @@
  */
 
 import type * as analytics from "../analytics.js";
+import type * as auth_password_profile from "../auth/password_profile.js";
 import type * as auth from "../auth.js";
 import type * as conversations_create from "../conversations/create.js";
 import type * as conversations from "../conversations.js";
@@ -43,6 +44,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
+  "auth/password_profile": typeof auth_password_profile;
   auth: typeof auth;
   "conversations/create": typeof conversations_create;
   conversations: typeof conversations;
