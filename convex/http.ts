@@ -7,7 +7,7 @@ const http = httpRouter();
 auth.addHttpRoutes(http);
 
 const cors = corsRouter(http, {
-  allowedOrigins: ["http://localhost:3000"],
+  allowedOrigins: ["http://localhost:3000", "https://saydn-chat.vercel.app"],
   allowedHeaders: ["Content-Type", "Authorization"],
   allowCredentials: true,
 });
